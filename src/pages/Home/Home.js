@@ -69,9 +69,9 @@ function Home() {
             {/* Hero Section */}
             <section className="hero" id="home">
                 <div className="hero-content">
-                    <h1 className="hero-title">Style Meets Elegance</h1>
+                    <h1 className="hero-title">HanCock</h1>
                     <p className="hero-description">
-                        Khám phá bộ sưu tập thời trang cao cấp với phong cách hiện đại và chất lượng tuyệt vời
+                        Khám phá bộ sưu tập thời trang cao cấp 
                     </p>
                     <div className="hero-cta">
                         <a href="#shop" className="btn-primary">Mua Sắm Ngay</a>
@@ -85,14 +85,14 @@ function Home() {
                 <div className="container">
                     <h2 className="section-title">Tại Sao Chọn Chúng Tôi?</h2>
                     <p className="section-subtitle">
-                        Chúng tôi cam kết mang đến trải nghiệm mua sắm tuyệt vời với chất lượng và dịch vụ hàng đầu
+                        Chúng tôi cam kết mang đến trải nghiệm mua sắm tuyệt vời 
                     </p>
 
                     <div className="features-grid">
                         {[
-                            { icon: '🚚', title: 'Giao Hàng Nhanh', text: 'Giao hàng miễn phí trong 24h cho đơn hàng trên 500.000đ' },
-                            { icon: '👗', title: 'Chất Lượng Cao', text: 'Sản phẩm được tuyển chọn kỹ lưỡng từ những thương hiệu uy tín' },
-                            { icon: '🔄', title: 'Đổi Trả Dễ Dàng', text: 'Chính sách đổi trả trong 30 ngày, không cần lý do' },
+                            { icon: '🚚', title: 'Giao Hàng Nhanh', text: 'Giao hàng miễn phí trong 24h' },
+                            { icon: '👗', title: 'Chất Lượng Cao', text: 'Sản phẩm được tuyển chọn kỹ lưỡng' },
+                            { icon: '🔄', title: 'Đổi Trả Dễ Dàng', text: 'Chính sách đổi trả trong 30 ngày' },
                         ].map((item, index) => (
                             <div className="atropos atropos-feature" key={index}>
                                 <div className="atropos-inner">
@@ -111,46 +111,46 @@ function Home() {
                 <div className="container">
                     <h2 className="section-title">Sản Phẩm Nổi Bật</h2>
                     <p className="section-subtitle">
-                        Những món đồ được yêu thích nhất từ bộ sưu tập mới nhất của chúng tôi
+                        Những món đồ được yêu thích nhất 
                     </p>
 
                     <div className="products-grid">
                         {[
                             {
                                 image: '/download.jpg',
-                                name: 'Áo Thun Basic Premium',
+                                name: 'Áo Thun',
                                 price: '299.000đ',
-                                desc: 'Áo thun cotton cao cấp, form dáng basic dễ phối đồ'
+                                desc: 'Áo thun '
                             },
                             {
                                 image: '/download.jpg',
-                                name: 'Quần Jeans Slim Fit',
+                                name: 'Quần Jeans',
                                 price: '599.000đ',
-                                desc: 'Quần jeans co giãn, form slim fit tôn dáng'
+                                desc: 'Quần jeans'
                             },
                             {
                                 image: '/download.jpg',
-                                name: 'Váy Maxi Hoa Nhí',
+                                name: 'Váy',
                                 price: '799.000đ',
-                                desc: 'Váy maxi họa tiết hoa nhí, chất liệu voan mềm mại'
+                                desc: 'Váy'
                             },
                             {
                                 image: '/download.jpg',
                                 name: 'Áo Khoác Blazer',
                                 price: '1.299.000đ',
-                                desc: 'Áo blazer công sở, form dáng thanh lịch'
+                                desc: 'Áo blazer'
                             },
                             {
                                 image: '/download.jpg',
-                                name: 'Túi Xách Da Cao Cấp',
+                                name: 'Túi Xách',
                                 price: '1.599.000đ',
-                                desc: 'Túi xách da thật, thiết kế sang trọng'
+                                desc: 'Túi xách'
                             },
                             {
                                 image: '/download.jpg',
-                                name: 'Giày Cao Gót 7cm',
+                                name: 'Giày Cao Gót',
                                 price: '899.000đ',
-                                desc: 'Giày cao gót mũi nhọn, phù hợp công sở'
+                                desc: 'Giày cao gót'
                             }
                         ].map((product, index) => (
                             <div className="atropos atropos-product" key={index}>
@@ -182,7 +182,7 @@ function Home() {
                         <div className="footer-section">
                             <h3>HanCock</h3>
                             <p>
-                                Điểm đến tin cậy cho thời trang cao cấp với chất lượng tuyệt vời và dịch vụ chuyên nghiệp.
+                                Điểm đến tin cậy cho thời trang.
                             </p>
                         </div>
                         <div className="footer-section">
