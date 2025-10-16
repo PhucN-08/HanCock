@@ -1,12 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
 
-
-
 function Home() {
     const [showSearch, setShowSearch] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [showResults, setShowResults] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
+    const searchRef = useRef(null);
+
+   
+    const allProducts = [
+        { id: 1, name: 'Áo Thun', price: '299.000đ', category: 'Áo', image: '/download.jpg' },
+        { id: 2, name: 'Quần Jeans', price: '599.000đ', category: 'Quần', image: '/download.jpg' },
+        { id: 3, name: 'Váy', price: '799.000đ', category: 'Váy', image: '/download.jpg' },
+        { id: 4, name: 'Áo Khoác Blazer', price: '1.299.000đ', category: 'Áo', image: '/download.jpg' },
+        { id: 5, name: 'Túi Xách', price: '1.599.000đ', category: 'Phụ kiện', image: '/download.jpg' },
+        { id: 6, name: 'Giày Cao Gót', price: '899.000đ', category: 'Giày', image: '/download.jpg' },
+    ];
 
     useEffect(() => {
         const header = document.getElementById('header');
@@ -20,6 +33,58 @@ function Home() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Close search when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setShowSearch(false);
+                setShowResults(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Search function
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        
+        if (query.trim().length > 0) {
+            const filtered = allProducts.filter(product =>
+                product.name.toLowerCase().includes(query.toLowerCase()) ||
+                product.category.toLowerCase().includes(query.toLowerCase())
+            );
+            setSearchResults(filtered);
+            setShowResults(true);
+        } else {
+            setSearchResults([]);
+            setShowResults(false);
+        }
+    };
+
+    const handleSearchIconClick = () => {
+        setShowSearch(!showSearch);
+        if (!showSearch) {
+            setTimeout(() => {
+                document.getElementById('searchInput')?.focus();
+            }, 100);
+        }
+    };
+
+    const clearSearch = () => {
+        setSearchQuery('');
+        setSearchResults([]);
+        setShowResults(false);
+    };
+
+   
+    const goToAdmin = () => {
+        
+        window.location.href = '/qlsanpham';
+        
+        
+    };
 
     return (
         <>
@@ -45,20 +110,58 @@ function Home() {
                                 <a href="#bags">Túi Xách</a>
                             </div>
                         </li>
+                        {/* Icon Admin/Settings */}
+                        <li>
+                            <a href="#" onClick={(e) => { e.preventDefault(); goToAdmin(); }} className="admin-link">
+                                Quản Lý
+                            </a>
+                        </li>
                     </ul>
                 </nav>
 
                 <div className="nav-actions">
-                    <div className="search-container">
-                        <div className="search-icon" onClick={() => setShowSearch(!showSearch)}>🔍</div>
-                        <input
-                            type="text"
-                            className={`search-box ${showSearch ? 'active' : ''}`}
-                            id="searchBox"
-                            placeholder="Tìm kiếm sản phẩm..."
-                        />
+                    <div className="search-container" ref={searchRef}>
+                        <div className={`search-wrapper ${showSearch ? 'active' : ''}`}>
+                            <div className="search-icon" onClick={handleSearchIconClick}>
+                                🔍
+                            </div>
+                            <input
+                                type="text"
+                                className="search-input"
+                                id="searchInput"
+                                placeholder="Tìm kiếm sản phẩm..."
+                                value={searchQuery}
+                                onChange={(e) => handleSearch(e.target.value)}
+                            />
+                            {searchQuery && (
+                                <div className="search-clear" onClick={clearSearch}>
+                                    ✕
+                                </div>
+                            )}
+                        </div>
+                        
+                        {/* Search Results Dropdown */}
+                        <div className={`search-results ${showResults ? 'show' : ''}`}>
+                            {searchResults.length > 0 ? (
+                                searchResults.map(product => (
+                                    <div key={product.id} className="search-result-item">
+                                        <img src={product.image} alt={product.name} className="search-result-image" />
+                                        <div className="search-result-info">
+                                            <div className="search-result-name">{product.name}</div>
+                                            <div className="search-result-price">{product.price}</div>
+                                            <div className="search-result-category">{product.category}</div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : searchQuery ? (
+                                <div className="search-no-results">
+                                    <div className="search-no-results-icon">🔍</div>
+                                    <div>Không tìm thấy sản phẩm phù hợp</div>
+                                </div>
+                            ) : null}
+                        </div>
                     </div>
-                    <a href="#" className="nav-icon" onClick={() => setShowLogin(true)}>👤</a>
+                    <a href="#" className="nav-icon" onClick={(e) => { e.preventDefault(); setShowLogin(true); }}>👤</a>
                     <a href="#cart" className="nav-icon">
                         🛒
                         <span className="cart-count">3</span>
@@ -69,9 +172,9 @@ function Home() {
             {/* Hero Section */}
             <section className="hero" id="home">
                 <div className="hero-content">
-                    <h1 className="hero-title">Style Meets Elegance</h1>
+                    <h1 className="hero-title">Thời Trang</h1>
                     <p className="hero-description">
-                        Khám phá bộ sưu tập thời trang cao cấp với phong cách hiện đại và chất lượng tuyệt vời
+                        Khám phá bộ sưu tập mới nhất từ HanCock 
                     </p>
                     <div className="hero-cta">
                         <a href="#shop" className="btn-primary">Mua Sắm Ngay</a>
@@ -85,14 +188,14 @@ function Home() {
                 <div className="container">
                     <h2 className="section-title">Tại Sao Chọn Chúng Tôi?</h2>
                     <p className="section-subtitle">
-                        Chúng tôi cam kết mang đến trải nghiệm mua sắm tuyệt vời với chất lượng và dịch vụ hàng đầu
+                        Chúng tôi cam kết mang đến trải nghiệm mua sắm tốt nhất
                     </p>
 
                     <div className="features-grid">
                         {[
-                            { icon: '🚚', title: 'Giao Hàng Nhanh', text: 'Giao hàng miễn phí trong 24h cho đơn hàng trên 500.000đ' },
-                            { icon: '👗', title: 'Chất Lượng Cao', text: 'Sản phẩm được tuyển chọn kỹ lưỡng từ những thương hiệu uy tín' },
-                            { icon: '🔄', title: 'Đổi Trả Dễ Dàng', text: 'Chính sách đổi trả trong 30 ngày, không cần lý do' },
+                            { icon: '🚚', title: 'Giao Hàng Nhanh', text: 'Giao hàng miễn phí trong 24h' },
+                            { icon: '👗', title: 'Chất Lượng Cao', text: 'Sản phẩm được tuyển chọn kỹ lưỡng' },
+                            { icon: '🔄', title: 'Đổi Trả Dễ Dàng', text: 'Chính sách đổi trả trong 30 ngày' },
                         ].map((item, index) => (
                             <div className="atropos atropos-feature" key={index}>
                                 <div className="atropos-inner">
@@ -111,46 +214,46 @@ function Home() {
                 <div className="container">
                     <h2 className="section-title">Sản Phẩm Nổi Bật</h2>
                     <p className="section-subtitle">
-                        Những món đồ được yêu thích nhất từ bộ sưu tập mới nhất của chúng tôi
+                        Những món đồ được yêu thích nhất 
                     </p>
 
                     <div className="products-grid">
                         {[
                             {
                                 image: '/download.jpg',
-                                name: 'Áo Thun Basic Premium',
+                                name: 'Áo Thun ',
                                 price: '299.000đ',
-                                desc: 'Áo thun cotton cao cấp, form dáng basic dễ phối đồ'
+                                desc: 'Áo thun cotton'
                             },
                             {
                                 image: '/download.jpg',
-                                name: 'Quần Jeans Slim Fit',
+                                name: 'Quần Jeans',
                                 price: '599.000đ',
-                                desc: 'Quần jeans co giãn, form slim fit tôn dáng'
+                                desc: 'Quần jeans co giãn'
                             },
                             {
                                 image: '/download.jpg',
-                                name: 'Váy Maxi Hoa Nhí',
+                                name: 'Váy',
                                 price: '799.000đ',
-                                desc: 'Váy maxi họa tiết hoa nhí, chất liệu voan mềm mại'
+                                desc: 'Váy'
                             },
                             {
                                 image: '/download.jpg',
                                 name: 'Áo Khoác Blazer',
                                 price: '1.299.000đ',
-                                desc: 'Áo blazer công sở, form dáng thanh lịch'
+                                desc: 'Áo blazer'
                             },
                             {
                                 image: '/download.jpg',
-                                name: 'Túi Xách Da Cao Cấp',
+                                name: 'Túi Xách',
                                 price: '1.599.000đ',
-                                desc: 'Túi xách da thật, thiết kế sang trọng'
+                                desc: 'Túi xách'
                             },
                             {
                                 image: '/download.jpg',
-                                name: 'Giày Cao Gót 7cm',
+                                name: 'Giày Cao Gót',
                                 price: '899.000đ',
-                                desc: 'Giày cao gót mũi nhọn, phù hợp công sở'
+                                desc: 'Giày cao gót'
                             }
                         ].map((product, index) => (
                             <div className="atropos atropos-product" key={index}>
@@ -173,7 +276,6 @@ function Home() {
                     </div>
                 </div>
             </section>
-
 
             {/* Footer */}
             <footer className="footer">
