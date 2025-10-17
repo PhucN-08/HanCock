@@ -1,12 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
 
-
-
 function Home() {
     const [showSearch, setShowSearch] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [showResults, setShowResults] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
+    const searchRef = useRef(null);
+
+
+    const allProducts = [
+        { id: 1, name: 'Áo Thun', price: '299.000đ', category: 'Áo', image: '/download.jpg' },
+        { id: 2, name: 'Quần Jeans', price: '599.000đ', category: 'Quần', image: '/download.jpg' },
+        { id: 3, name: 'Váy', price: '799.000đ', category: 'Váy', image: '/download.jpg' },
+        { id: 4, name: 'Áo Khoác Blazer', price: '1.299.000đ', category: 'Áo', image: '/download.jpg' },
+        { id: 5, name: 'Túi Xách', price: '1.599.000đ', category: 'Phụ kiện', image: '/download.jpg' },
+        { id: 6, name: 'Giày Cao Gót', price: '899.000đ', category: 'Giày', image: '/download.jpg' },
+    ];
 
     useEffect(() => {
         const header = document.getElementById('header');
@@ -20,6 +33,58 @@ function Home() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Close search when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setShowSearch(false);
+                setShowResults(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Search function
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+
+        if (query.trim().length > 0) {
+            const filtered = allProducts.filter(product =>
+                product.name.toLowerCase().includes(query.toLowerCase()) ||
+                product.category.toLowerCase().includes(query.toLowerCase())
+            );
+            setSearchResults(filtered);
+            setShowResults(true);
+        } else {
+            setSearchResults([]);
+            setShowResults(false);
+        }
+    };
+
+    const handleSearchIconClick = () => {
+        setShowSearch(!showSearch);
+        if (!showSearch) {
+            setTimeout(() => {
+                document.getElementById('searchInput')?.focus();
+            }, 100);
+        }
+    };
+
+    const clearSearch = () => {
+        setSearchQuery('');
+        setSearchResults([]);
+        setShowResults(false);
+    };
+
+
+    const goToAdmin = () => {
+
+        window.location.href = '/qlsanpham';
+
+
+    };
 
     return (
         <>
@@ -45,20 +110,58 @@ function Home() {
                                 <a href="#bags">Túi Xách</a>
                             </div>
                         </li>
+                        {/* Icon Admin/Settings */}
+                        <li>
+                            <a href="#" onClick={(e) => { e.preventDefault(); goToAdmin(); }} className="admin-link">
+                                Quản Lý
+                            </a>
+                        </li>
                     </ul>
                 </nav>
 
                 <div className="nav-actions">
-                    <div className="search-container">
-                        <div className="search-icon" onClick={() => setShowSearch(!showSearch)}>🔍</div>
-                        <input
-                            type="text"
-                            className={`search-box ${showSearch ? 'active' : ''}`}
-                            id="searchBox"
-                            placeholder="Tìm kiếm sản phẩm..."
-                        />
+                    <div className="search-container" ref={searchRef}>
+                        <div className={`search-wrapper ${showSearch ? 'active' : ''}`}>
+                            <div className="search-icon" onClick={handleSearchIconClick}>
+                                🔍
+                            </div>
+                            <input
+                                type="text"
+                                className="search-input"
+                                id="searchInput"
+                                placeholder="Tìm kiếm sản phẩm..."
+                                value={searchQuery}
+                                onChange={(e) => handleSearch(e.target.value)}
+                            />
+                            {searchQuery && (
+                                <div className="search-clear" onClick={clearSearch}>
+                                    ✕
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Search Results Dropdown */}
+                        <div className={`search-results ${showResults ? 'show' : ''}`}>
+                            {searchResults.length > 0 ? (
+                                searchResults.map(product => (
+                                    <div key={product.id} className="search-result-item">
+                                        <img src={product.image} alt={product.name} className="search-result-image" />
+                                        <div className="search-result-info">
+                                            <div className="search-result-name">{product.name}</div>
+                                            <div className="search-result-price">{product.price}</div>
+                                            <div className="search-result-category">{product.category}</div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : searchQuery ? (
+                                <div className="search-no-results">
+                                    <div className="search-no-results-icon">🔍</div>
+                                    <div>Không tìm thấy sản phẩm phù hợp</div>
+                                </div>
+                            ) : null}
+                        </div>
                     </div>
-                    <a href="#" className="nav-icon" onClick={() => setShowLogin(true)}>👤</a>
+                    <a href="#" className="nav-icon" onClick={(e) => { e.preventDefault(); setShowLogin(true); }}>👤</a>
                     <a href="#cart" className="nav-icon">
                         🛒
                         <span className="cart-count">3</span>
@@ -69,24 +172,27 @@ function Home() {
             {/* Hero Section */}
             <section className="hero" id="home">
                 <div className="hero-content">
-                    <h1 className="hero-title">HanCock</h1>
+                    <h1 className="hero-title">Thời Trang</h1>
                     <p className="hero-description">
-                        Khám phá bộ sưu tập thời trang cao cấp 
-                    </p>
+                        Khám phá bộ sưu tập mới nhất từ HanCock
+
+                    </p >
                     <div className="hero-cta">
                         <a href="#shop" className="btn-primary">Mua Sắm Ngay</a>
                         <a href="#products" className="btn-secondary">Xem Bộ Sưu Tập</a>
                     </div>
-                </div>
-            </section>
+                </div >
+            </section >
 
             {/* Features Section */}
-            <section className="features">
+            < section className="features" >
                 <div className="container">
                     <h2 className="section-title">Tại Sao Chọn Chúng Tôi?</h2>
                     <p className="section-subtitle">
-                        Chúng tôi cam kết mang đến trải nghiệm mua sắm tuyệt vời 
-                    </p>
+
+                        Chúng tôi cam kết mang đến trải nghiệm mua sắm tốt nhất
+
+                    </p >
 
                     <div className="features-grid">
                         {[
@@ -103,30 +209,35 @@ function Home() {
                             </div>
                         ))}
                     </div>
-                </div>
-            </section>
+                </div >
+            </section >
 
             {/* Products Section */}
-            <section className="products" id="products">
+            < section className="products" id="products" >
                 <div className="container">
                     <h2 className="section-title">Sản Phẩm Nổi Bật</h2>
                     <p className="section-subtitle">
-                        Những món đồ được yêu thích nhất 
+                        Những món đồ được yêu thích nhất
                     </p>
 
                     <div className="products-grid">
                         {[
                             {
                                 image: '/download.jpg',
-                                name: 'Áo Thun',
+
+
+                                name: 'Áo Thun ',
                                 price: '299.000đ',
-                                desc: 'Áo thun '
+                                desc: 'Áo thun cotton'
+
                             },
                             {
                                 image: '/download.jpg',
                                 name: 'Quần Jeans',
                                 price: '599.000đ',
-                                desc: 'Quần jeans'
+
+                                desc: 'Quần jeans co giãn'
+
                             },
                             {
                                 image: '/download.jpg',
@@ -172,11 +283,10 @@ function Home() {
                         ))}
                     </div>
                 </div>
-            </section>
-
+            </section >
 
             {/* Footer */}
-            <footer className="footer">
+            < footer className="footer" >
                 <div className="container">
                     <div className="footer-content">
                         <div className="footer-section">
@@ -218,9 +328,10 @@ function Home() {
                         <p>&copy; 2024 HanCock.</p>
                     </div>
                 </div>
-            </footer>
-           
-            {showLogin && <LoginAndSignup onClose={() => setShowLogin(false)} />}
+            </footer >
+
+            {showLogin && <LoginAndSignup onClose={() => setShowLogin(false)} />
+            }
         </>
     );
 }

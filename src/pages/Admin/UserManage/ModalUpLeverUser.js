@@ -3,13 +3,8 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 function ModalUpLeverUser({ show, handleClose, userInfor }) {
-
-
-
     return (
         <>
-
-
             <Modal show={show} onHide={handleClose} animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Xác nhận!</Modal.Title>
