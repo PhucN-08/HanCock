@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './QLSanPham.css';
-
+import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
 function QLSanPham() {
   const [products, setProducts] = useState([]);
   const [currentEditId, setCurrentEditId] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [nextId, setNextId] = useState(1);
-
   const [searchTerm, setSearchTerm] = useState('');
-
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     id: '',
@@ -18,7 +17,6 @@ function QLSanPham() {
     price: '',
     image: null,
   });
-
   const [alert, setAlert] = useState({ message: '', type: '', visible: false });
 
   // Initialize sample data
@@ -26,7 +24,7 @@ function QLSanPham() {
     const sampleProducts = [
       {
         id: '001',
-        name: 'Áo thun nam basic',
+        name: 'Áo thun',
         category: 'Áo',
         description: 'Áo thun',
         price: 299000,
@@ -34,33 +32,61 @@ function QLSanPham() {
       },
       {
         id: '002',
-        name: 'Áo thun nam basic',
+        name: 'Áo sơ mi',
         category: 'Áo',
-        description: 'Áo thun',
-        price: 299000,
+        description: 'Áo sơ mi',
+        price: 399000,
         image: 'download.jpg',
       },
       {
         id: '003',
-        name: 'Áo thun nam basic',
-        category: 'Áo',
-        description: 'Áo thun',
-        price: 299000,
+        name: 'Quần jean',
+        category: 'Quần',
+        description: 'Quần jean',
+        price: 499000,
+        image: 'download.jpg',
+      },
+      {
+        id: '004',
+        name: 'Giày',
+        category: 'Giày',
+        description: 'Giày',
+        price: 799000,
         image: 'download.jpg',
       },
     ];
     setProducts(sampleProducts);
-    setNextId(4);
+    setNextId(5);
   }, []);
 
+  const groupProductsByCategory = (productList) => {
+    const grouped = {};
+    productList.forEach((product) => {
+      if (!grouped[product.category]) {
+        grouped[product.category] = [];
+      }
+      grouped[product.category].push(product);
+    });
+
+    return Object.keys(grouped)
+      .sort((a, b) => a.localeCompare(b, 'vi', { sensitivity: 'base' }))
+      .map((category) => ({
+        category,
+        products: grouped[category],
+      }));
+  };
+
   // Filtered products based on search
-  const productsToShow = searchTerm
+  const filteredProducts = searchTerm
     ? products.filter(
       (p) =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.id.toLowerCase().includes(searchTerm.toLowerCase())
+        p.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchTerm.toLowerCase())
     )
     : products;
+
+  const groupedProducts = groupProductsByCategory(filteredProducts);
 
   // Stats
   const totalProducts = products.length;
@@ -68,7 +94,6 @@ function QLSanPham() {
   const categoriesCount = new Set(products.map((p) => p.category)).size;
 
   // Handlers
-
   const openAddModal = () => {
     setCurrentEditId(null);
     setFormData({
@@ -125,13 +150,13 @@ function QLSanPham() {
     setAlert({ message, type, visible: true });
     setTimeout(() => {
       setAlert((prev) => ({ ...prev, visible: false }));
-    }, 3000);
+    }, 2000);
   };
 
   const saveProduct = () => {
     // validation
     if (!formData.name || !formData.category || !formData.price) {
-      showAlertMsg('Vui lòng điền đầy đủ!', 'error');
+      showAlertMsg('Vui lòng điền đầy đủ thông tin!', 'error');
       return;
     }
     if (!formData.image && currentEditId === null) {
@@ -181,28 +206,26 @@ function QLSanPham() {
   };
 
   return (
-    <div>
+    <div className="ql-san-pham-page">
       <header className="header">
         <div className="header-content">
           <div className="logo">
-            <img
-              src="H_by_sokolski-removebg-preview.png"
-              alt="HanCock Logo"
-            />
+            <img src="H_by_sokolski-removebg-preview.png" alt="HanCock Logo" />
             <span className="logo-text">HanCock</span>
           </div>
           <div className="header-actions">
             <Link to="/" className="btn">
-              ← Về Trang Chủ
+              Về Trang Chủ
             </Link>
             <button className="btn">📊 Báo cáo</button>
             <button className="btn">⚙️ Cài đặt</button>
             <button className="btn">👤 Admin</button>
-
-            {/* ad user and cate */}
-            <button className="btn" ><Link to="/qluser">Tài khoản</Link></button>
-            <button className="btn"><Link to="/qlcate">Danh mục</Link></button>
-
+            <Link to="/qluser" className="btn">
+              Tài khoản
+            </Link>
+            <Link to="/qlcate" className="btn">
+              Danh mục
+            </Link>
           </div>
         </div>
       </header>
@@ -222,10 +245,11 @@ function QLSanPham() {
             <div className="stat-label">Tổng sản phẩm</div>
           </div>
           <div className="stat-card">
-            <div className="stat-number">{new Intl.NumberFormat('vi-VN', {
-              style: 'currency',
-              currency: 'VND'
-            }).format(totalValue)}
+            <div className="stat-number">
+              {new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+              }).format(totalValue)}
             </div>
             <div className="stat-label">Tổng giá trị</div>
           </div>
@@ -240,7 +264,7 @@ function QLSanPham() {
             <span className="search-icon">🔍</span>
             <input
               type="text"
-              placeholder="Tìm kiếm sản phẩm theo ID hoặc tên..."
+              placeholder="Tìm kiếm sản phẩm..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -250,63 +274,108 @@ function QLSanPham() {
           </button>
         </div>
 
-        {productsToShow.length === 0 ? (
+        {groupedProducts.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon">📦</div>
             <h3>Chưa có sản phẩm nào</h3>
             <p>Hãy thêm sản phẩm đầu tiên</p>
-            <button className="btn btn-primary" onClick={openAddModal} style={{ marginTop: '1rem' }}>
+            <button
+              className="btn btn-primary"
+              onClick={openAddModal}
+              style={{ marginTop: '1rem' }}
+            >
               ➕ Thêm sản phẩm đầu tiên
             </button>
           </div>
         ) : (
-          <div className="product-grid">
-            {productsToShow.map((product) => (
-              <div key={product.id} className="product-card">
-                <div className="product-image">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    onError={(e) => {
-                      e.target.src =
-                        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM2YjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Lw7RuZyB0w6FpIGjDrG5oPC90ZXh0Pjwvc3ZnPg==";
-                    }}
-                  />
-                </div>
-                <div className="product-info">
-                  <div className="product-id">#{product.id}</div>
-                  <div className="product-name">{product.name}</div>
-                  <div className="product-description">
-                    {product.description || 'Chưa có mô tả'}
-                  </div>
-                  <div className="product-price">
-                    {new Intl.NumberFormat('vi-VN', {
-                      style: 'currency',
-                      currency: 'VND'
-                    }).format(product.price)}
-                  </div>
-                  <div className="product-actions">
-                    <button className="btn btn-small" onClick={() => openEditModal(product)}>
-                      ✏️ Sửa
-                    </button>
-                    <button className="btn btn-small btn-danger" onClick={() => deleteProduct(product.id)}>
-                      🗑️ Xóa
-                    </button>
-                  </div>
-                </div>
+          groupedProducts.map(({ category, products: categoryProducts }, index) => (
+            <div key={category} className="category-section">
+              <h2 className="category-title">
+                <span className="category-id">#{String(index + 1).padStart(2, '0')}</span>:{category}
+              </h2>
+              <div className="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Hình ảnh</th>
+                      <th>ID</th>
+                      <th>Tên sản phẩm</th>
+                      <th>Mô tả</th>
+                      <th>Giá</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {categoryProducts.map((product) => (
+                      <tr key={product.id}>
+                        <td>
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="product-image"
+                            onError={(e) => {
+                              e.target.src =
+                                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZjlmYWZiIi8+PHRleHQgeD0iMzAiIHk9IjMwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2YjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5OL0E8L3RleHQ+PC9zdmc+';
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <span className="product-id">#{product.id}</span>
+                        </td>
+                        <td>
+                          <span className="product-name">{product.name}</span>
+                        </td>
+                        <td>{product.description || 'Chưa có mô tả'}</td>
+                        <td>
+                          <span className="product-price">
+                            {new Intl.NumberFormat('vi-VN', {
+                              style: 'currency',
+                              currency: 'VND',
+                            }).format(product.price)}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="product-actions">
+                            <Link
+                              to={`/chitietspadm/${product.id}`}
+                              className="btn btn-small btn-info"
+                            >
+                              📄 Chi tiết
+                            </Link>
+                            <button
+                              className="btn btn-small"
+                              onClick={() => openEditModal(product)}
+                            >
+                              ✏️ Sửa
+                            </button>
+                            <button
+                              className="btn btn-small btn-danger"
+                              onClick={() => deleteProduct(product.id)}
+                            >
+                              🗑️ Xóa
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
+            </div>
+          ))
         )}
       </div>
 
       {/* Modal */}
       {modalOpen && (
-        <div className={`modal ${modalOpen ? 'show' : ''}`} onClick={(e) => {
-          if (e.target.classList.contains('modal')) {
-            closeModal();
-          }
-        }}>
+        <div
+          className={`modal ${modalOpen ? 'show' : ''}`}
+          onClick={(e) => {
+            if (e.target.classList.contains('modal')) {
+              closeModal();
+            }
+          }}
+        >
           <div className="modal-content">
             <div className="modal-header">
               <h2 className="modal-title">
@@ -412,6 +481,12 @@ function QLSanPham() {
             </div>
           </div>
         </div>
+      )}
+      {selectedProduct && (
+        <ChiTietSanPham
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
       )}
     </div>
   );

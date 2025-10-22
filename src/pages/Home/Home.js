@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
+import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
 
 function Home() {
     const [showSearch, setShowSearch] = useState(false);
@@ -9,17 +10,69 @@ function Home() {
     const [searchResults, setSearchResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
     const searchRef = useRef(null);
 
-
     const allProducts = [
-        { id: 1, name: 'Áo Thun', price: '299.000đ', category: 'Áo', image: '/download.jpg' },
-        { id: 2, name: 'Quần Jeans', price: '599.000đ', category: 'Quần', image: '/download.jpg' },
-        { id: 3, name: 'Váy', price: '799.000đ', category: 'Váy', image: '/download.jpg' },
-        { id: 4, name: 'Áo Khoác Blazer', price: '1.299.000đ', category: 'Áo', image: '/download.jpg' },
-        { id: 5, name: 'Túi Xách', price: '1.599.000đ', category: 'Phụ kiện', image: '/download.jpg' },
-        { id: 6, name: 'Giày Cao Gót', price: '899.000đ', category: 'Giày', image: '/download.jpg' },
+        { 
+            id: 1, 
+            name: 'Áo Thun', 
+            price: 299000,
+            originalPrice: 360000,
+            category: 'Áo', 
+            image: '/download.jpg',
+            description: 'Áo thun'
+        },
+        { 
+            id: 2, 
+            name: 'Quần Jeans', 
+            price: 599000,
+            originalPrice: 750000,
+            category: 'Quần', 
+            image: '/download.jpg',
+            description: 'Quần jeans'
+        },
+        { 
+            id: 3, 
+            name: 'Váy', 
+            price: 799000,
+            originalPrice: 950000,
+            category: 'Váy', 
+            image: '/download.jpg',
+            description: 'Váy'
+        },
+        { 
+            id: 4, 
+            name: 'Áo Khoác Blazer', 
+            price: 1299000,
+            originalPrice: 1650000,
+            category: 'Áo', 
+            image: '/download.jpg',
+            description: 'Áo blazer'
+        },
+        { 
+            id: 5, 
+            name: 'Túi Xách', 
+            price: 1599000,
+            originalPrice: 2100000,
+            category: 'Phụ kiện', 
+            image: '/download.jpg',
+            description: 'Túi xách'
+        },
+        { 
+            id: 6, 
+            name: 'Giày Cao Gót', 
+            price: 899000,
+            originalPrice: 1200000,
+            category: 'Giày', 
+            image: '/download.jpg',
+            description: 'Giày'
+        },
     ];
+
+    const calculateDiscount = (original, current) => {
+        return Math.round(((original - current) / original) * 100);
+    };
 
     useEffect(() => {
         const header = document.getElementById('header');
@@ -34,7 +87,6 @@ function Home() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Close search when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -46,7 +98,6 @@ function Home() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Search function
     const handleSearch = (query) => {
         setSearchQuery(query);
 
@@ -78,17 +129,16 @@ function Home() {
         setShowResults(false);
     };
 
-
     const goToAdmin = () => {
-
         window.location.href = '/qlsanpham';
+    };
 
-
+    const openProductDetail = (product) => {
+        setSelectedProduct(product);
     };
 
     return (
         <>
-            {/* Header */}
             <header className="header" id="header">
                 <a href="#" className="logo">
                     <img src="H_by_sokolski-removebg-preview.png" alt="HanCock Logo" />
@@ -110,7 +160,6 @@ function Home() {
                                 <a href="#bags">Túi Xách</a>
                             </div>
                         </li>
-                        {/* Icon Admin/Settings */}
                         <li>
                             <a href="#" onClick={(e) => { e.preventDefault(); goToAdmin(); }} className="admin-link">
                                 Quản Lý
@@ -140,15 +189,16 @@ function Home() {
                             )}
                         </div>
 
-                        {/* Search Results Dropdown */}
                         <div className={`search-results ${showResults ? 'show' : ''}`}>
                             {searchResults.length > 0 ? (
                                 searchResults.map(product => (
-                                    <div key={product.id} className="search-result-item">
+                                    <div key={product.id} className="search-result-item" onClick={() => openProductDetail(product)}>
                                         <img src={product.image} alt={product.name} className="search-result-image" />
                                         <div className="search-result-info">
                                             <div className="search-result-name">{product.name}</div>
-                                            <div className="search-result-price">{product.price}</div>
+                                            <div className="search-result-price">
+                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
+                                            </div>
                                             <div className="search-result-category">{product.category}</div>
                                         </div>
                                     </div>
@@ -169,30 +219,25 @@ function Home() {
                 </div>
             </header>
 
-            {/* Hero Section */}
             <section className="hero" id="home">
                 <div className="hero-content">
                     <h1 className="hero-title">Thời Trang</h1>
                     <p className="hero-description">
                         Khám phá bộ sưu tập mới nhất từ HanCock
-
-                    </p >
+                    </p>
                     <div className="hero-cta">
                         <a href="#shop" className="btn-primary">Mua Sắm Ngay</a>
                         <a href="#products" className="btn-secondary">Xem Bộ Sưu Tập</a>
                     </div>
-                </div >
-            </section >
+                </div>
+            </section>
 
-            {/* Features Section */}
-            < section className="features" >
+            <section className="features">
                 <div className="container">
                     <h2 className="section-title">Tại Sao Chọn Chúng Tôi?</h2>
                     <p className="section-subtitle">
-
                         Chúng tôi cam kết mang đến trải nghiệm mua sắm tốt nhất
-
-                    </p >
+                    </p>
 
                     <div className="features-grid">
                         {[
@@ -209,11 +254,10 @@ function Home() {
                             </div>
                         ))}
                     </div>
-                </div >
-            </section >
+                </div>
+            </section>
 
-            {/* Products Section */}
-            < section className="products" id="products" >
+            <section className="products" id="products">
                 <div className="container">
                     <h2 className="section-title">Sản Phẩm Nổi Bật</h2>
                     <p className="section-subtitle">
@@ -221,61 +265,33 @@ function Home() {
                     </p>
 
                     <div className="products-grid">
-                        {[
-                            {
-                                image: '/download.jpg',
-
-
-                                name: 'Áo Thun ',
-                                price: '299.000đ',
-                                desc: 'Áo thun cotton'
-
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Quần Jeans',
-                                price: '599.000đ',
-
-                                desc: 'Quần jeans co giãn'
-
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Váy',
-                                price: '799.000đ',
-                                desc: 'Váy'
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Áo Khoác Blazer',
-                                price: '1.299.000đ',
-                                desc: 'Áo blazer'
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Túi Xách',
-                                price: '1.599.000đ',
-                                desc: 'Túi xách'
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Giày Cao Gót',
-                                price: '899.000đ',
-                                desc: 'Giày cao gót'
-                            }
-                        ].map((product, index) => (
-                            <div className="atropos atropos-product" key={index}>
+                        {allProducts.map((product) => (
+                            <div className="atropos atropos-product" key={product.id}>
                                 <div className="atropos-inner">
-                                    <div className="product-image">
-                                        <img src={product.image} alt={product.name} className="product-img" />
+                                    <div className="home-product-image" onClick={() => openProductDetail(product)} style={{ cursor: 'pointer' }}>
+                                        <img src={product.image} alt={product.name} className="home-product-img" />
+                                        {product.originalPrice && (
+                                            <span className="home-product-discount">
+                                                -{calculateDiscount(product.originalPrice, product.price)}%
+                                            </span>
+                                        )}
                                     </div>
-                                    <div className="product-info">
-                                        <h3 className="product-name">{product.name}</h3>
-                                        <div className="product-price">{product.price}</div>
-                                        <p className="product-description">{product.desc}</p>
-                                        <div className="product-actions">
-                                            <a href="#" className="btn-small primary">Thêm Giỏ Hàng</a>
-                                            <a href="#" className="btn-small">Chi Tiết</a>
+                                    <div className="home-product-info">
+                                        <h3 className="home-product-name">{product.name}</h3>
+                                        <div className="home-product-price-wrapper">
+                                            <div className="home-product-price">
+                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
+                                            </div>
+                                            {product.originalPrice && (
+                                                <div className="home-product-original-price">
+                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.originalPrice)}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <p className="home-product-description">{product.description}</p>
+                                        <div className="home-product-actions">
+                                            <button className="btn-small primary" onClick={() => openProductDetail(product)}>Thêm Giỏ Hàng</button>
+                                            <button className="btn-small" onClick={() => openProductDetail(product)}>Mua Ngay</button>
                                         </div>
                                     </div>
                                 </div>
@@ -283,10 +299,9 @@ function Home() {
                         ))}
                     </div>
                 </div>
-            </section >
+            </section>
 
-            {/* Footer */}
-            < footer className="footer" >
+            <footer className="footer">
                 <div className="container">
                     <div className="footer-content">
                         <div className="footer-section">
@@ -328,10 +343,15 @@ function Home() {
                         <p>&copy; 2024 HanCock.</p>
                     </div>
                 </div>
-            </footer >
+            </footer>
 
-            {showLogin && <LoginAndSignup onClose={() => setShowLogin(false)} />
-            }
+            {showLogin && <LoginAndSignup onClose={() => setShowLogin(false)} />}
+            {selectedProduct && (
+                <ChiTietSanPham
+                    product={selectedProduct}
+                    onClose={() => setSelectedProduct(null)}
+                />
+            )}
         </>
     );
 }
