@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import './QLSanPham.css';
 
 function QLSanPham() {
@@ -182,31 +181,6 @@ function QLSanPham() {
 
   return (
     <div>
-      <header className="header">
-        <div className="header-content">
-          <div className="logo">
-            <img
-              src="H_by_sokolski-removebg-preview.png"
-              alt="HanCock Logo"
-            />
-            <span className="logo-text">HanCock</span>
-          </div>
-          <div className="header-actions">
-            <Link to="/" className="btn">
-              ← Về Trang Chủ
-            </Link>
-            <button className="btn">📊 Báo cáo</button>
-            <button className="btn">⚙️ Cài đặt</button>
-            <button className="btn">👤 Admin</button>
-
-            {/* ad user and cate */}
-            <button className="btn" ><Link to="/qluser">Tài khoản</Link></button>
-            <button className="btn"><Link to="/qlcate">Danh mục</Link></button>
-
-          </div>
-        </div>
-      </header>
-
       <div className="container">
         <h1 className="page-title">Quản Lý Sản Phẩm</h1>
 

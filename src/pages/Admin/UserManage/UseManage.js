@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ModalBanUser from "./ModalBanUser";
 import ModalDeleteUser from "./ModalDeleteUser";
 import ModalUpLeverUser from "./ModalUpLeverUser";
+import('bootstrap/dist/css/bootstrap.min.css');
 
 
 const UserManage = () => {
@@ -21,14 +22,11 @@ const UserManage = () => {
         setUserInfor(null);
         setShowUpLevelModal(false);
     };
-    useEffect(() => {
 
-        import('bootstrap/dist/css/bootstrap.min.css');
-    }, [])
 
     return (<>
         <div className="container mt-4">
-            <h2 className="mb-4">Danh sách Người dùng</h2>
+            <h2 className="mb-4 text-center">Danh sách Người dùng</h2>
 
 
             <table className="table table-striped table-bordered">

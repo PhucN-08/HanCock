@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import './LoginAndSignup.css';
+import { toast } from 'react-toastify';
+import axios from '../../api/axiosClient';
 
 function LoginAndSignup({ onClose }) {
+
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [showLoginPassword, setShowLoginPassword] = useState(false);
 
@@ -21,36 +24,66 @@ function LoginAndSignup({ onClose }) {
 
   const passwordOk = (pwd) => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(pwd);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (mode === 'signup') {
       if (!passwordOk(suPassword)) {
-        alert('Mật khẩu phải từ 6 ký tự, gồm cả số và chữ.');
+        toast.error('Mật khẩu phải từ 6 ký tự, gồm cả số và chữ.');
         return;
       }
       if (suPassword !== suConfirm) {
-        alert('Xác nhận mật khẩu không trùng khớp.');
+        toast.error('Xác nhận mật khẩu không trùng khớp.');
         return;
       }
-      alert('Đăng ký thành công!');
-      setMode('login');
-      setSuPassword('');
-      setSuConfirm('');
+      try {
+        const res = await axios.post("/api/user/register", { fullname: suName, email: suEmail, password: suPassword });
+        if (res?.EC === 0) {
+          toast.success('Đăng ký thành công.');
+          setMode('login');
+          setSuPassword('');
+          setSuConfirm('');
+        } else {
+          toast.warn(res?.EM);
+
+        }
+
+      } catch (err) {
+        console.log(err)
+      }
+
       return;
     }
 
     if (!loginEmail || !loginPassword) {
-      alert('Vui lòng nhập email và mật khẩu.');
+      toast.warning('Vui lòng nhập email và mật khẩu.');
       return;
     }
-    alert('Đăng nhập thành công!');
+    try {
+      const res = await axios.post("/api/user/login", { email: loginEmail, password: loginPassword });
+      if (res?.EC === 0) {
+        toast.success('Đăng nhập thành công.');
+        console.log(res);
+        localStorage.setItem('user', JSON.stringify(res?.EM));
+        localStorage.setItem('accessToken', JSON.stringify(res?.accessToken));
+        window.location.reload();
+        onClose();
+        return;
+      } else {
+        toast.warn(res?.EM);
+
+      }
+
+    } catch (err) {
+      console.log(err)
+    }
   };
+
 
   return (
     <div className="auth-overlay">
       <div className="auth-container">
         <button className="close-btn" onClick={handleClose}>×</button>
-        
+
         <style>{`.form-box label{font-size:15px}`}</style>
 
         {mode === 'login' ? (
@@ -143,7 +176,10 @@ function LoginAndSignup({ onClose }) {
                 autoComplete="new-password"
               />
 
-              <button type="submit" className="btn-auth">Đăng ký</button>
+              <button
+                type="submit"
+                className="btn-auth"
+              >Đăng ký</button>
             </form>
             <p className="switch-auth">
               Đã có tài khoản?{' '}

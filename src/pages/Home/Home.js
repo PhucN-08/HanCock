@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
+import axios from '../../api/axiosClient';
+import { Bounce, ToastContainer } from 'react-toastify';
+import ModalLogout from './ModalLogout';
 
 function Home() {
     const [showSearch, setShowSearch] = useState(false);
@@ -9,17 +12,45 @@ function Home() {
     const [searchResults, setSearchResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
-    const searchRef = useRef(null);
+
+    const [logged, setlogged] = useState(JSON.parse(localStorage.getItem('user')));
+    const [showModalLogOut, setShowModalLogOut] = useState(false);
 
 
-    const allProducts = [
+    const [allProducts, setAllProducts] = useState([
         { id: 1, name: 'Áo Thun', price: '299.000đ', category: 'Áo', image: '/download.jpg' },
         { id: 2, name: 'Quần Jeans', price: '599.000đ', category: 'Quần', image: '/download.jpg' },
         { id: 3, name: 'Váy', price: '799.000đ', category: 'Váy', image: '/download.jpg' },
         { id: 4, name: 'Áo Khoác Blazer', price: '1.299.000đ', category: 'Áo', image: '/download.jpg' },
         { id: 5, name: 'Túi Xách', price: '1.599.000đ', category: 'Phụ kiện', image: '/download.jpg' },
         { id: 6, name: 'Giày Cao Gót', price: '899.000đ', category: 'Giày', image: '/download.jpg' },
-    ];
+    ]);
+    const searchRef = useRef(null);
+
+    useEffect(() => {
+
+        const getAllPro = async () => {
+            try {
+                const api = await axios.get('/api/pro/getAllPro');
+                setAllProducts(api);
+            } catch (error) {
+
+            }
+
+        }
+        getAllPro();
+    }, [])
+
+    // console.log("product", allProducts);
+    const handleCloseModalLogOut = () => {
+        setShowModalLogOut(false);
+    }
+
+    const handleLogOut = () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('accessToken');
+        window.location.reload()
+    }
 
     useEffect(() => {
         const header = document.getElementById('header');
@@ -80,11 +111,9 @@ function Home() {
 
 
     const goToAdmin = () => {
-
-        window.location.href = '/qlsanpham';
-
-
+        window.location.href = '/ql';
     };
+    // console.log(logged.ten_khachhang)
 
     return (
         <>
@@ -110,12 +139,15 @@ function Home() {
                                 <a href="#bags">Túi Xách</a>
                             </div>
                         </li>
-                        {/* Icon Admin/Settings */}
-                        <li>
-                            <a href="#" onClick={(e) => { e.preventDefault(); goToAdmin(); }} className="admin-link">
-                                Quản Lý
-                            </a>
-                        </li>
+                        {JSON.parse(localStorage.getItem('user'))?.role === 'admin'
+                            &&
+                            <li>
+                                <a href="#" onClick={(e) => { e.preventDefault(); goToAdmin(); }} className="admin-link">
+                                    Quản Lý
+                                </a>
+                            </li>
+                        }
+
                     </ul>
                 </nav>
 
@@ -161,11 +193,24 @@ function Home() {
                             ) : null}
                         </div>
                     </div>
-                    <a href="#" className="nav-icon" onClick={(e) => { e.preventDefault(); setShowLogin(true); }}>👤</a>
                     <a href="#cart" className="nav-icon">
                         🛒
                         <span className="cart-count">3</span>
                     </a>
+                    {!logged
+                        ?
+                        <a href="#" className="nav-icon" onClick={(e) => { e.preventDefault(); setShowLogin(true); }}>👤</a>
+                        :
+                        <>
+                            <a href="#" className="nav-icon" onClick={(e) => { setShowModalLogOut(true) }}><i className="fa-solid fa-right-from-bracket"></i></a>
+                            <button
+                                className='btn btn-default'
+                            >{logged?.ten_khachhang}</button>
+
+                        </>
+
+                    }
+
                 </div>
             </header>
 
@@ -221,61 +266,19 @@ function Home() {
                     </p>
 
                     <div className="products-grid">
-                        {[
-                            {
-                                image: '/download.jpg',
-
-
-                                name: 'Áo Thun ',
-                                price: '299.000đ',
-                                desc: 'Áo thun cotton'
-
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Quần Jeans',
-                                price: '599.000đ',
-
-                                desc: 'Quần jeans co giãn'
-
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Váy',
-                                price: '799.000đ',
-                                desc: 'Váy'
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Áo Khoác Blazer',
-                                price: '1.299.000đ',
-                                desc: 'Áo blazer'
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Túi Xách',
-                                price: '1.599.000đ',
-                                desc: 'Túi xách'
-                            },
-                            {
-                                image: '/download.jpg',
-                                name: 'Giày Cao Gót',
-                                price: '899.000đ',
-                                desc: 'Giày cao gót'
-                            }
-                        ].map((product, index) => (
+                        {allProducts.map((product, index) => (
                             <div className="atropos atropos-product" key={index}>
                                 <div className="atropos-inner">
                                     <div className="product-image">
-                                        <img src={product.image} alt={product.name} className="product-img" />
+                                        <img src={product.hinhanh} alt={product.tensp} className="product-img" />
                                     </div>
                                     <div className="product-info">
-                                        <h3 className="product-name">{product.name}</h3>
-                                        <div className="product-price">{product.price}</div>
-                                        <p className="product-description">{product.desc}</p>
+                                        <h3 className="product-name">{product.tensp}</h3>
+                                        <div className="product-price">{product.gia}</div>
+                                        <p className="product-description">{product.mota_sanpham || "không có"}</p>
                                         <div className="product-actions">
-                                            <a href="#" className="btn-small primary">Thêm Giỏ Hàng</a>
-                                            <a href="#" className="btn-small">Chi Tiết</a>
+                                            <button href="#" className="btn-small primary">Thêm Giỏ Hàng</button>
+                                            <button href="#" className="btn-small">Chi Tiết</button>
                                         </div>
                                     </div>
                                 </div>
@@ -332,6 +335,25 @@ function Home() {
 
             {showLogin && <LoginAndSignup onClose={() => setShowLogin(false)} />
             }
+            <ModalLogout
+                show={showModalLogOut}
+                handleClose={handleCloseModalLogOut}
+                userInfor={logged?.email}
+                handleLogOut={handleLogOut}
+            />
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+            />
         </>
     );
 }
