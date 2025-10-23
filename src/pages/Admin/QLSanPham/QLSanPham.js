@@ -1,12 +1,15 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import axios from '../../../api/axiosClient';
 import './QLSanPham.css';
 import ChiTietSanPham from '../../ChiTietSanPham/ChiTietSanPham';
+import { toast } from 'react-toastify';
 function QLSanPham() {
   const [products, setProducts] = useState([]);
   const [currentEditId, setCurrentEditId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [categories, setCategories] = useState(null);
   const [nextId, setNextId] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
@@ -22,42 +25,14 @@ function QLSanPham() {
 
   // Initialize sample data
   useEffect(() => {
-    const sampleProducts = [
-      {
-        id: '001',
-        name: 'Áo thun',
-        category: 'Áo',
-        description: 'Áo thun',
-        price: 299000,
-        image: 'download.jpg',
-      },
-      {
-        id: '002',
-        name: 'Áo sơ mi',
-        category: 'Áo',
-        description: 'Áo sơ mi',
-        price: 399000,
-        image: 'download.jpg',
-      },
-      {
-        id: '003',
-        name: 'Quần jean',
-        category: 'Quần',
-        description: 'Quần jean',
-        price: 499000,
-        image: 'download.jpg',
-      },
-      {
-        id: '004',
-        name: 'Giày',
-        category: 'Giày',
-        description: 'Giày',
-        price: 799000,
-        image: 'download.jpg',
-      },
-    ];
-    setProducts(sampleProducts);
-    setNextId(5);
+    const contruction = async () => {
+      const sampleProducts = await axios.get('/api/pro/getAllPro');
+      const samCategory = await axios.get('/api/cate/getAllCategory')
+      setProducts(sampleProducts);
+      setNextId(sampleProducts.length + 1);
+      setCategories(samCategory);
+    }
+    contruction();
   }, []);
 
   const groupProductsByCategory = (productList) => {
@@ -154,18 +129,20 @@ function QLSanPham() {
     }, 2000);
   };
 
-  const saveProduct = () => {
+  const saveProduct = async () => {
+
     // validation
     if (!formData.name || !formData.category || !formData.price) {
-      showAlertMsg('Vui lòng điền đầy đủ thông tin!', 'error');
+      toast.warn('Vui lòng điền đầy đủ thông tin!');
       return;
     }
     if (!formData.image && currentEditId === null) {
-      showAlertMsg('Vui lòng chọn hình ảnh!', 'error');
+      toast.warn('Vui lòng chọn hình ảnh!');
       return;
     }
 
     if (currentEditId) {
+
       // update
       setProducts((prev) =>
         prev.map((p) =>
@@ -181,6 +158,20 @@ function QLSanPham() {
             : p
         )
       );
+      try {
+        await axios.put('/api/pro/putEditPro', {
+          id: currentEditId,
+          name: formData.name,
+          category: categories.find(e => e.ten_dmc === formData.category).ma_dmc,
+          description: formData.description,
+          price: Number(formData.price),
+          image: formData.image,
+        })
+
+      } catch (err) {
+        console.log(err)
+      }
+
       showAlertMsg('Cập nhật thành công!', 'success');
     } else {
       // add new
@@ -199,13 +190,20 @@ function QLSanPham() {
     closeModal();
   };
 
-  const deleteProduct = (id) => {
+  const deleteProduct = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa?')) {
-      setProducts((prev) => prev.filter((p) => p.id !== id));
-      showAlertMsg('Xóa thành công!', 'success');
+      try {
+        await axios.delete(`/api/pro/delProduct?id=${id}`);
+        setProducts((prev) => prev.filter((p) => p.id !== id));
+        showAlertMsg('Xóa thành công!', 'success');
+      } catch (err) {
+        showAlertMsg('Lỗi từ hệ thống', 'error');
+
+      }
+
     }
   };
-
+  // console.log(categories)
   return (
     <div className='ql-san-pham-page'>
       <div className="container">
@@ -288,7 +286,7 @@ function QLSanPham() {
                       <tr key={product.id}>
                         <td>
                           <img
-                            src={product.image}
+                            src={product.image || 'data:image/svg+xml;base64,PHN2ZyB3aWQ9IjYwIiBoZWlnaHQ9IjYwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iI2Y5ZmFmYiIvPjx0ZXh0IHg9IjMwIiB5PSIzMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNmI3MjgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Ti9BPC90ZXh0Pjwvc3ZnPg=='}
                             alt={product.name}
                             className="product-image"
                             onError={(e) => {
@@ -392,17 +390,15 @@ function QLSanPham() {
                   <select
                     className="form-input"
                     name="category"
-                    value={formData.category}
+                    defaultValue={formData.category}
                     required
                     onChange={handleInputChange}
                   >
                     <option value="">Chọn danh mục</option>
-                    <option value="Áo">Áo</option>
-                    <option value="Quần">Quần</option>
-                    <option value="Váy">Váy</option>
-                    <option value="Giày">Giày</option>
-                    <option value="Phụ kiện">Phụ kiện</option>
-                    <option value="Túi xách">Túi xách</option>
+                    {categories?.map((item, index) => {
+                      return <option key={`id${index}`} value={item.ten_dmc}>{item.ten_dmc}</option>
+                    })}
+
                   </select>
                 </div>
                 <div className="form-group">

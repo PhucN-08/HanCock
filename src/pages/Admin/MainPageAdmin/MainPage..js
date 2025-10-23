@@ -16,7 +16,7 @@ const MainPage = () => {
                 </div>
                 <div className="header-actions">
                     <Link to="/" className="btnf">
-                        ← Về Trang Chủ
+                        Về Trang Chủ
                     </Link>
                     <Link className="btnf" to="/ql">Sản phẩm</Link>
                     <Link className="btnf" to="/ql/user">Tài khoản</Link>
