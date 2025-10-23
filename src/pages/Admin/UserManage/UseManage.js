@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import ModalBanUser from "./ModalBanUser";
 import ModalDeleteUser from "./ModalDeleteUser";
 import ModalUpLeverUser from "./ModalUpLeverUser";
-import('bootstrap/dist/css/bootstrap.min.css');
 
 
 const UserManage = () => {

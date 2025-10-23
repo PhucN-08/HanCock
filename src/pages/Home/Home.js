@@ -36,7 +36,6 @@ function Home() {
             } catch (error) {
 
             }
-
         }
         getAllPro();
     }, [])
