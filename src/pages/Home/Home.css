@@ -617,6 +617,12 @@ body {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.search-wrapper.active {
+    width: 350px;
+    border-color: #2c2c2c;
+    box-shadow: 0 4px 12px rgba(44, 44, 44, 0.15);
+}
+
 .search-wrapper.active .search-input {
     width: 100%;
     opacity: 1;
@@ -748,9 +754,7 @@ body {
         height: 40px;
     }
 
-    .search-wrapper.active {
-        width: 250px;
-    }
+
 
     .search-results {
         width: 250px;

@@ -183,9 +183,21 @@ function QLSanPham() {
         price: Number(formData.price),
         image: formData.image,
       };
-      setProducts((prev) => [...prev, newProd]);
-      setNextId((prev) => prev + 1);
-      showAlertMsg('Thêm sản phẩm thành công!', 'success');
+      try {
+        await axios.post('/api/pro/postCreateProduct', {
+          tensp: formData.name,
+          ma_dmc: categories.find(e => e.ten_dmc === formData.category).ma_dmc,
+          mota_sanpham: formData.description,
+          gia: Number(formData.price),
+          hinhanh: formData.image,
+        })
+        setProducts((prev) => [...prev, newProd]);
+        setNextId((prev) => prev + 1);
+        showAlertMsg('Thêm sản phẩm thành công!', 'success');
+      } catch (err) {
+        console.log(err);
+      }
+
     }
     closeModal();
   };
@@ -363,17 +375,6 @@ function QLSanPham() {
             </div>
             <div className="modal-body">
               <form>
-                <div className="form-group">
-                  <label className="form-label">ID Sản phẩm</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    name="id"
-                    value={formData.id}
-                    readOnly
-                    style={{ backgroundColor: '#f3f4f6' }}
-                  />
-                </div>
                 <div className="form-group">
                   <label className="form-label required">Tên sản phẩm</label>
                   <input

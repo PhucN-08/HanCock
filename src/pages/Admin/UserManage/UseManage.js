@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ModalBanUser from "./ModalBanUser";
 import ModalDeleteUser from "./ModalDeleteUser";
 import ModalUpLeverUser from "./ModalUpLeverUser";
+import axios from '../../../api/axiosClient';
 
 
 const UserManage = () => {
@@ -9,6 +10,17 @@ const UserManage = () => {
     const [showBanModal, setShowBanModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showUpLevelModal, setShowUpLevelModal] = useState(false);
+
+    const [listUser, setListUser] = useState([]);
+    useEffect(() => {
+        const constructor = async () => {
+            const result = await axios.get('/api/user/account');
+            setListUser(result);
+        }
+
+        constructor();
+    }, [])
+    // console.log(listUser);
     const handleCloseBanModal = () => {
         setUserInfor(null);
         setShowBanModal(false);
@@ -39,44 +51,46 @@ const UserManage = () => {
                     </tr>
                 </thead>
                 <tbody>
+                    {listUser.map((item, index) => {
+                        return (<tr>
+                            <td>{index}</td>
+                            <td>{item.ten_khachhang}</td>
+                            <td>{item.email}</td>
+                            <td>{item.role}</td>
+                            <td>
+                                <button
+                                    className="btn btn-sm btn-warning mx-2"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#userModal"
+                                    onClick={() => {
+                                        setUserInfor(item);
+                                        setShowBanModal(true)
+                                    }}
+                                >
+                                    Cấm
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-danger mx-2"
+                                    onClick={() => {
+                                        setUserInfor(item);
+                                        setShowDeleteModal(true)
+                                    }}
+                                >
+                                    Xóa
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-primary mx-2"
+                                    onClick={() => {
+                                        setUserInfor(item);
+                                        setShowUpLevelModal(true)
+                                    }}
+                                >
+                                    chi tiết
+                                </button>
+                            </td>
+                        </tr>)
+                    })}
 
-                    <tr>
-                        <td>1</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>vana@example.com</td>
-                        <td>Admin</td>
-                        <td>
-                            <button
-                                className="btn btn-sm btn-warning mx-2"
-                                data-bs-toggle="modal"
-                                data-bs-target="#userModal"
-                                onClick={() => {
-                                    setUserInfor({ "name": "Nguyễn Văn A", "id": "1" });
-                                    setShowBanModal(true)
-                                }}
-                            >
-                                Cấm
-                            </button>
-                            <button
-                                className="btn btn-sm btn-danger mx-2"
-                                onClick={() => {
-                                    setUserInfor({ "name": "Nguyễn Văn A", "id": "1" });
-                                    setShowDeleteModal(true)
-                                }}
-                            >
-                                Xóa
-                            </button>
-                            <button
-                                className="btn btn-sm btn-primary mx-2"
-                                onClick={() => {
-                                    setUserInfor({ "name": "Nguyễn Văn A", "id": "1" });
-                                    setShowUpLevelModal(true)
-                                }}
-                            >
-                                chi tiết
-                            </button>
-                        </td>
-                    </tr>
 
 
                 </tbody>

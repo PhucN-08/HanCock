@@ -13,7 +13,7 @@ function ModalUpLeverUser({ show, handleClose, userInfor }) {
                     <form id="userForm">
                         <div className="mb-3">
                             <label className="form-label">Tên</label>
-                            <input className="form-control" value={userInfor?.name} readOnly />
+                            <input className="form-control" value={userInfor?.ten_khachhang} readOnly />
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Email</label>
@@ -26,8 +26,9 @@ function ModalUpLeverUser({ show, handleClose, userInfor }) {
                                 id="role"
                                 defaultValue={userInfor?.role}
                             >
-                                <option value="Admin">Admin</option>
-                                <option value="User">User</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                                <option value="staff">User</option>
                             </select>
                         </div>
                     </form>

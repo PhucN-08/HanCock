@@ -120,7 +120,7 @@ function Home() {
     const openProductDetail = (product) => {
         setSelectedProduct(product);
     };
-    // console.log(logged.ten_khachhang)
+    console.log(allProducts)
 
     return (
         <>
@@ -271,26 +271,26 @@ function Home() {
                             <div className="atropos atropos-product" key={product.masp}>
                                 <div className="atropos-inner">
                                     <div className="home-product-image" onClick={() => openProductDetail(product)} style={{ cursor: 'pointer' }}>
-                                        <img src={product.hinhanh} alt={product.tensp} className="home-product-img" />
-                                        {product.phantram_khuyenmai && (
+                                        <img src={product.image} alt={product.name} className="home-product-img" />
+                                        {product.khuyenmai && (
                                             <span className="home-product-discount">
-                                                -{calculateDiscount(product.phantram_khuyenmai)}%
+                                                -{calculateDiscount(product.khuyenmai)}%
                                             </span>
                                         )}
                                     </div>
                                     <div className="home-product-info">
-                                        <h3 className="home-product-name">{product.tensp}</h3>
+                                        <h3 className="home-product-name">{product.name}</h3>
                                         <div className="home-product-price-wrapper">
                                             <div className="home-product-price">
-                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.gia)}
+                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
                                             </div>
-                                            {product.phantram_khuyenmai && (
+                                            {product.khuyenmai && (
                                                 <div className="home-product-original-price">
-                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.phantram_khuyenmai)}
+                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.khuyenmai)}
                                                 </div>
                                             )}
                                         </div>
-                                        <p className="home-product-description">{product.mota_sanpham}</p>
+                                        <p className="home-product-description">{product.description}</p>
                                         <div className="home-product-actions">
                                             <button className="btn-small primary" onClick={() => openProductDetail(product)}>Thêm Giỏ Hàng</button>
                                             <button className="btn-small" onClick={() => openProductDetail(product)}>Mua Ngay</button>

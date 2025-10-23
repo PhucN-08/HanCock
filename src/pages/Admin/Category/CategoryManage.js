@@ -16,14 +16,14 @@ const CategoryManage = () => {
 
 
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     const getAllDM = async () => {
-    //         const api = await axios.get("/danhmuc");
-    //         setCategories(api);
-    //     }
-    //     getAllDM();
-    // }, [])
+        const getAllDM = async () => {
+            const api = await axios.get("/api/cate/getAllCategoryByAdmin");
+            setCategories(api);
+        }
+        getAllDM();
+    }, [])
 
     console.log(categories)
     // Load dữ liệu khi trang load
@@ -191,42 +191,42 @@ const CategoryManage = () => {
                         {categories.map((cat, index) => {
                             return (
                                 <Fragment key={`catmain${index}`}>
-                                    <tr id={`main-row-${cat.maDanhMuc}`} className={`${editingMainId === cat.maDanhMuc ? "editing" : ""}`}>
-                                        <td>{cat.maDanhMuc}</td>
+                                    <tr id={`main-row-${cat.id}`} className={`${editingMainId === cat.id ? "editing" : ""}`}>
+                                        <td>{cat.id}</td>
                                         <td>
-                                            {editingMainId === cat.maDanhMuc ?
+                                            {editingMainId === cat.id ?
                                                 <><input
 
                                                     className='rounded-3 border-primary shadow-sm'
                                                     type={"text"}
                                                     defaultValue={cat.name}
                                                     ref={editMain}
-                                                    id={`editMainInput-${cat.maDanhMuc}`}
+                                                    id={`editMainInput-${cat.id}`}
                                                     style={{ width: "200px", height: "30px" }}
                                                 />
-                                                    <button className="save-btn mx-3" onClick={() => saveMainEdit(cat.maDanhMuc)}>Lưu</button>
+                                                    <button className="save-btn mx-3" onClick={() => saveMainEdit(cat.id)}>Lưu</button>
                                                     <button className="cancel-btn" onClick={() => cancelEdit()}>Hủy</button>
                                                 </>
                                                 :
-                                                cat.tenDanhMuc
+                                                cat.name
                                             }
 
                                         </td>
 
                                         <td>
-                                            {editingMainId === cat.maDanhMuc ? '' :
-                                                <button className="edit-btn" onClick={() => editMainCategory(cat.maDanhMuc)}>Sửa</button>
+                                            {editingMainId === cat.id ? '' :
+                                                <button className="edit-btn" onClick={() => editMainCategory(cat.id)}>Sửa</button>
                                             }
-                                            <button className="delete-btn" onClick={() => deleteMainCategory(cat.maDanhMuc)}>Xóa</button>
-                                            <button className="add-sub-btn" onClick={() => toggleSubForm(cat.maDanhMuc)}>Thêm danh mục con</button>
+                                            <button className="delete-btn" onClick={() => deleteMainCategory(cat.id)}>Xóa</button>
+                                            <button className="add-sub-btn" onClick={() => toggleSubForm(cat.id)}>Thêm danh mục con</button>
                                         </td>
                                     </tr>
-                                    <tr id={`sub-row-${cat.maDanhMuc}`}>
+                                    <tr id={`sub-row-${cat.id}`}>
                                         <td colSpan={4}>
-                                            <div id={`sub-form-${cat.maDanhMuc}`} className={`sub-form ${idCateAddSub === cat.maDanhMuc ? "show" : ""}`}>
+                                            <div id={`sub-form-${cat.id}`} className={`sub-form ${idCateAddSub === cat.id ? "show" : ""}`}>
                                                 <input
                                                     type="text"
-                                                    id={`subNameInput-${cat.maDanhMuc}`}
+                                                    id={`subNameInput-${cat.id}`}
                                                     placeholder="Tên danh mục con"
                                                     className='rounded-3 border-primary shadow-sm'
                                                     required
@@ -235,38 +235,39 @@ const CategoryManage = () => {
                                                         setNameSub(event.target.value)
                                                     }}
                                                 />
-                                                <button className='save-btn mx-2' onClick={() => addSubcategory(cat.maDanhMuc)}>Thêm</button>
-                                                <button className='cancel-btn' onClick={() => toggleSubForm(cat.maDanhMuc)}>Hủy</button>
+                                                <button className='save-btn mx-2' onClick={() => addSubcategory(cat.id)}>Thêm</button>
+                                                <button className='cancel-btn' onClick={() => toggleSubForm(cat.id)}>Hủy</button>
                                             </div>
 
-                                            <table id={`sub-table-${cat.maDanhMuc}`} className="sub-table show">
-                                                <tbody id={`sub-body-${cat.maDanhMuc}`}>
+                                            <table id={`sub-table-${cat.id}`} className="sub-table show">
+                                                <tbody id={`sub-body-${cat.id}`}>
                                                     {cat.subcategories ? cat.subcategories.map(sub => {
                                                         return (
-                                                            <tr key={`sub${sub.maDMC}`} id={`sub-row-${cat.maDanhMuc}-${sub.maDMC}`} className={`${editingSubId === sub.maDMC && editingMainParentId === cat.maDanhMuc ? "editing" : ""}`}>
+                                                            <tr key={`sub${sub.id}`} id={`sub-row-${cat.id}-${sub.id}`} className={`${editingSubId === sub.id && editingMainParentId === cat.id ? "editing" : ""}`}>
                                                                 <td></td>
-                                                                <td className="sub-id">{sub.maDMC}</td>
+                                                                <td className="sub-id"></td>
                                                                 <td>
-                                                                    {editingSubId === sub.maDMC && editingMainParentId === cat.maDanhMuc ?
+                                                                    {editingSubId === sub.id && editingMainParentId === cat.id ?
                                                                         <><input
                                                                             type="text"
                                                                             className='rounded-3 border-primary shadow-sm'
                                                                             value={nameEditSub}
-                                                                            id={`"editSubInput-${cat.maDanhMuc}-${sub.maDMC}"`}
+                                                                            id={`"editSubInput-${cat.id}-${sub.id}"`}
                                                                             style={{ width: "150px" }}
                                                                             onChange={(event) => {
                                                                                 setNameEditSub(event.target.value)
                                                                             }}
                                                                         />
-                                                                            <button className={"save-btn mx-5"} onClick={() => saveSubEdit(cat.maDanhMuc, sub.maDMC)}>Lưu</button></> :
-                                                                        sub.tenDMC
+                                                                            <button className={"save-btn mx-5"} onClick={() => saveSubEdit(cat.id, sub.id)}>Lưu</button></>
+                                                                        :
+                                                                        sub.name
                                                                     }
                                                                 </td>
                                                                 <td>
-                                                                    {editingSubId === sub.maDMC && editingMainParentId === cat.maDanhMuc ? '' :
-                                                                        <><button className="edit-btn" onClick={() => editSubcategory(cat.maDanhMuc, sub.maDMC)}>Sửa</button></>
+                                                                    {editingSubId === sub.id && editingMainParentId === cat.id ? '' :
+                                                                        <><button className="edit-btn" onClick={() => editSubcategory(cat.id, sub.id)}>Sửa</button></>
                                                                     }
-                                                                    <button className="delete-btn" onClick={() => deleteSubcategory(cat.maDanhMuc, sub.maDMC)}>Xóa</button>
+                                                                    <button className="delete-btn" onClick={() => deleteSubcategory(cat.id, sub.id)}>Xóa</button>
                                                                 </td>
                                                             </tr>
                                                         )
