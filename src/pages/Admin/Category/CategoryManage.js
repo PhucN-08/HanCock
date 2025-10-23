@@ -15,10 +15,7 @@ const CategoryManage = () => {
     const [nameEditSub, setNameEditSub] = useState("");
 
 
-    useEffect(() => {
-        import('bootstrap/dist/css/bootstrap.min.css');
-        loadCategories();
-    }, [])
+
     // useEffect(() => {
 
     //     const getAllDM = async () => {

@@ -1,4 +1,4 @@
-import QLSanPham from '../QLSanPham/QLSanPham';
+
 import '../QLSanPham/QLSanPham.css';
 import { Link, Outlet } from 'react-router-dom';
 import('bootstrap/dist/css/bootstrap.min.css');

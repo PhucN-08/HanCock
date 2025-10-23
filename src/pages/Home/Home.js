@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import './Home.css';
 import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
 import axios from '../../api/axiosClient';
 import { Bounce, ToastContainer } from 'react-toastify';
 import ModalLogout from './ModalLogout';
+import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
 
 function Home() {
     const [showSearch, setShowSearch] = useState(false);
@@ -50,6 +50,13 @@ function Home() {
         localStorage.removeItem('accessToken');
         window.location.reload()
     }
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
+
+
+    const calculateDiscount = (original) => {
+        return Math.round(original);
+    };
 
     useEffect(() => {
         const header = document.getElementById('header');
@@ -64,7 +71,6 @@ function Home() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Close search when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -76,7 +82,6 @@ function Home() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Search function
     const handleSearch = (query) => {
         setSearchQuery(query);
 
@@ -108,15 +113,17 @@ function Home() {
         setShowResults(false);
     };
 
-
     const goToAdmin = () => {
         window.location.href = '/ql';
+    };
+
+    const openProductDetail = (product) => {
+        setSelectedProduct(product);
     };
     // console.log(logged.ten_khachhang)
 
     return (
         <>
-            {/* Header */}
             <header className="header" id="header">
                 <a href="#" className="logo">
                     <img src="H_by_sokolski-removebg-preview.png" alt="HanCock Logo" />
@@ -171,15 +178,16 @@ function Home() {
                             )}
                         </div>
 
-                        {/* Search Results Dropdown */}
                         <div className={`search-results ${showResults ? 'show' : ''}`}>
                             {searchResults.length > 0 ? (
                                 searchResults.map(product => (
-                                    <div key={product.id} className="search-result-item">
+                                    <div key={product.id} className="search-result-item" onClick={() => openProductDetail(product)}>
                                         <img src={product.image} alt={product.name} className="search-result-image" />
                                         <div className="search-result-info">
                                             <div className="search-result-name">{product.name}</div>
-                                            <div className="search-result-price">{product.price}</div>
+                                            <div className="search-result-price">
+                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
+                                            </div>
                                             <div className="search-result-category">{product.category}</div>
                                         </div>
                                     </div>
@@ -213,30 +221,25 @@ function Home() {
                 </div>
             </header>
 
-            {/* Hero Section */}
             <section className="hero" id="home">
                 <div className="hero-content">
                     <h1 className="hero-title">Thời Trang</h1>
                     <p className="hero-description">
                         Khám phá bộ sưu tập mới nhất từ HanCock
-
-                    </p >
+                    </p>
                     <div className="hero-cta">
                         <a href="#shop" className="btn-primary">Mua Sắm Ngay</a>
                         <a href="#products" className="btn-secondary">Xem Bộ Sưu Tập</a>
                     </div>
-                </div >
-            </section >
+                </div>
+            </section>
 
-            {/* Features Section */}
-            < section className="features" >
+            <section className="features">
                 <div className="container">
                     <h2 className="section-title">Tại Sao Chọn Chúng Tôi?</h2>
                     <p className="section-subtitle">
-
                         Chúng tôi cam kết mang đến trải nghiệm mua sắm tốt nhất
-
-                    </p >
+                    </p>
 
                     <div className="features-grid">
                         {[
@@ -253,31 +256,44 @@ function Home() {
                             </div>
                         ))}
                     </div>
-                </div >
-            </section >
+                </div>
+            </section>
 
-            {/* Products Section */}
-            < section className="products" id="products" >
+            <section className="products" id="products">
                 <div className="container">
                     <h2 className="section-title">Sản Phẩm Nổi Bật</h2>
                     <p className="section-subtitle">
                         Những món đồ được yêu thích nhất
                     </p>
 
-                    <div className="products-grid">
-                        {allProducts.map((product, index) => (
-                            <div className="atropos atropos-product" key={index}>
+                    <div className="products-grid">{console.log(allProducts)}
+                        {allProducts.map((product) => (
+                            <div className="atropos atropos-product" key={product.masp}>
                                 <div className="atropos-inner">
-                                    <div className="product-image">
-                                        <img src={product.hinhanh} alt={product.tensp} className="product-img" />
+                                    <div className="home-product-image" onClick={() => openProductDetail(product)} style={{ cursor: 'pointer' }}>
+                                        <img src={product.hinhanh} alt={product.tensp} className="home-product-img" />
+                                        {product.phantram_khuyenmai && (
+                                            <span className="home-product-discount">
+                                                -{calculateDiscount(product.phantram_khuyenmai)}%
+                                            </span>
+                                        )}
                                     </div>
-                                    <div className="product-info">
-                                        <h3 className="product-name">{product.tensp}</h3>
-                                        <div className="product-price">{product.gia}</div>
-                                        <p className="product-description">{product.mota_sanpham || "không có"}</p>
-                                        <div className="product-actions">
-                                            <button href="#" className="btn-small primary">Thêm Giỏ Hàng</button>
-                                            <button href="#" className="btn-small">Chi Tiết</button>
+                                    <div className="home-product-info">
+                                        <h3 className="home-product-name">{product.tensp}</h3>
+                                        <div className="home-product-price-wrapper">
+                                            <div className="home-product-price">
+                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.gia)}
+                                            </div>
+                                            {product.phantram_khuyenmai && (
+                                                <div className="home-product-original-price">
+                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.phantram_khuyenmai)}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <p className="home-product-description">{product.mota_sanpham}</p>
+                                        <div className="home-product-actions">
+                                            <button className="btn-small primary" onClick={() => openProductDetail(product)}>Thêm Giỏ Hàng</button>
+                                            <button className="btn-small" onClick={() => openProductDetail(product)}>Mua Ngay</button>
                                         </div>
                                     </div>
                                 </div>
@@ -285,10 +301,9 @@ function Home() {
                         ))}
                     </div>
                 </div>
-            </section >
+            </section>
 
-            {/* Footer */}
-            < footer className="footer" >
+            <footer className="footer">
                 <div className="container">
                     <div className="footer-content">
                         <div className="footer-section">
@@ -330,10 +345,9 @@ function Home() {
                         <p>&copy; 2024 HanCock.</p>
                     </div>
                 </div>
-            </footer >
+            </footer>
 
-            {showLogin && <LoginAndSignup onClose={() => setShowLogin(false)} />
-            }
+
             <ModalLogout
                 show={showModalLogOut}
                 handleClose={handleCloseModalLogOut}
@@ -353,6 +367,13 @@ function Home() {
                 theme="light"
                 transition={Bounce}
             />
+            {showLogin && <LoginAndSignup onClose={() => setShowLogin(false)} />}
+            {selectedProduct && (
+                <ChiTietSanPham
+                    product={selectedProduct}
+                    onClose={() => setSelectedProduct(null)}
+                />
+            )}
         </>
     );
 }
