@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Home.css';
 import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
 import axios from '../../api/axiosClient';
@@ -6,12 +6,13 @@ import { Bounce, ToastContainer } from 'react-toastify';
 import ModalLogout from './ModalLogout';
 import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
 
+
 function Home() {
     const [showSearch, setShowSearch] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
+
     const [showResults, setShowResults] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
+    const [categories, setCategories] = useState(null);
 
     const [logged, setlogged] = useState(JSON.parse(localStorage.getItem('user')));
     const [showModalLogOut, setShowModalLogOut] = useState(false);
@@ -37,10 +38,20 @@ function Home() {
 
             }
         }
+        const getAllCate = async () => {
+            try {
+                const apicate = await axios.get('/api/cate/getAllCategory');
+                setCategories(apicate);
+
+            } catch (error) {
+
+            }
+        }
         getAllPro();
+        getAllCate();
     }, [])
 
-    // console.log("product", allProducts);
+    console.log("cate", categories);
     const handleCloseModalLogOut = () => {
         setShowModalLogOut(false);
     }
@@ -82,145 +93,14 @@ function Home() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-
-        if (query.trim().length > 0) {
-            const filtered = allProducts.filter(product =>
-                product.name.toLowerCase().includes(query.toLowerCase()) ||
-                product.category.toLowerCase().includes(query.toLowerCase())
-            );
-            setSearchResults(filtered);
-            setShowResults(true);
-        } else {
-            setSearchResults([]);
-            setShowResults(false);
-        }
-    };
-
-    const handleSearchIconClick = () => {
-        setShowSearch(!showSearch);
-        if (!showSearch) {
-            setTimeout(() => {
-                document.getElementById('searchInput')?.focus();
-            }, 100);
-        }
-    };
-
-    const clearSearch = () => {
-        setSearchQuery('');
-        setSearchResults([]);
-        setShowResults(false);
-    };
-
-    const goToAdmin = () => {
-        window.location.href = '/ql';
-    };
 
     const openProductDetail = (product) => {
         setSelectedProduct(product);
     };
-    console.log(allProducts)
+    // console.log(allProducts)
 
     return (
         <>
-            <header className="header" id="header">
-                <a href="#" className="logo">
-                    <img src="H_by_sokolski-removebg-preview.png" alt="HanCock Logo" />
-                    HanCock
-                </a>
-
-                <nav>
-                    <ul className="nav-menu">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#shop">Shop</a></li>
-                        <li className="dropdown">
-                            <a href="#categories">Danh Mục</a>
-                            <div className="dropdown-content">
-                                <a href="#women">Thời Trang Nữ</a>
-                                <a href="#men">Thời Trang Nam</a>
-                                <a href="#kids">Trẻ Em</a>
-                                <a href="#accessories">Phụ Kiện</a>
-                                <a href="#shoes">Giày Dép</a>
-                                <a href="#bags">Túi Xách</a>
-                            </div>
-                        </li>
-                        {JSON.parse(localStorage.getItem('user'))?.role === 'admin'
-                            &&
-                            <li>
-                                <a href="#" onClick={(e) => { e.preventDefault(); goToAdmin(); }} className="admin-link">
-                                    Quản Lý
-                                </a>
-                            </li>
-                        }
-
-                    </ul>
-                </nav>
-
-                <div className="nav-actions">
-                    <div className="search-container" ref={searchRef}>
-                        <div className={`search-wrapper ${showSearch ? 'active' : ''}`}>
-                            <div className="search-icon" onClick={handleSearchIconClick}>
-                                🔍
-                            </div>
-                            <input
-                                type="text"
-                                className="search-input"
-                                id="searchInput"
-                                placeholder="Tìm kiếm sản phẩm..."
-                                value={searchQuery}
-                                onChange={(e) => handleSearch(e.target.value)}
-                            />
-                            {searchQuery && (
-                                <div className="search-clear" onClick={clearSearch}>
-                                    ✕
-                                </div>
-                            )}
-                        </div>
-
-                        <div className={`search-results ${showResults ? 'show' : ''}`}>
-                            {searchResults.length > 0 ? (
-                                searchResults.map(product => (
-                                    <div key={product.id} className="search-result-item" onClick={() => openProductDetail(product)}>
-                                        <img src={product.image} alt={product.name} className="search-result-image" />
-                                        <div className="search-result-info">
-                                            <div className="search-result-name">{product.name}</div>
-                                            <div className="search-result-price">
-                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
-                                            </div>
-                                            <div className="search-result-category">{product.category}</div>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : searchQuery ? (
-                                <div className="search-no-results">
-                                    <div className="search-no-results-icon">🔍</div>
-                                    <div>Không tìm thấy sản phẩm phù hợp</div>
-                                </div>
-                            ) : null}
-                        </div>
-                    </div>
-                    <a href="#cart" className="nav-icon">
-                        🛒
-                        <span className="cart-count">3</span>
-                    </a>
-                    {!logged
-                        ?
-                        <a href="#" className="nav-icon" onClick={(e) => { e.preventDefault(); setShowLogin(true); }}>👤</a>
-                        :
-                        <>
-                            <a href="#" className="nav-icon" onClick={(e) => { setShowModalLogOut(true) }}><i className="fa-solid fa-right-from-bracket"></i></a>
-                            <button
-                                className='btn btn-default'
-                            >{logged?.ten_khachhang}</button>
-
-                        </>
-
-                    }
-
-                </div>
-            </header>
-
             <section className="hero" id="home">
                 <div className="hero-content">
                     <h1 className="hero-title">Thời Trang</h1>
@@ -266,9 +146,9 @@ function Home() {
                         Những món đồ được yêu thích nhất
                     </p>
 
-                    <div className="products-grid">{console.log(allProducts)}
-                        {allProducts.map((product) => (
-                            <div className="atropos atropos-product" key={product.masp}>
+                    <div className="products-grid">
+                        {allProducts.map((product, index) => (
+                            <div className="atropos atropos-product" key={`product.masp${index}`}>
                                 <div className="atropos-inner">
                                     <div className="home-product-image" onClick={() => openProductDetail(product)} style={{ cursor: 'pointer' }}>
                                         <img src={product.image} alt={product.name} className="home-product-img" />

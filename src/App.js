@@ -6,17 +6,22 @@ import Home from './pages/Home/Home';
 import QLSanPham from './pages/Admin/QLSanPham/QLSanPham';
 import MainPage from './pages/Admin/MainPageAdmin/MainPage.';
 import ChiTietSPAdm from './pages/ChiTietSPAdm/ChiTietSPAdm';
+import Shop from './pages/Shop/Shop';
+import FrameHeader from './pages/Home/FrameHeader';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<FrameHeader />}>
+          <Route path='/shop' element={<Shop />} />
+          <Route index element={< Home />} />
+
+        </Route>
         <Route path="/ql" element={<MainPage />}>
           <Route index="/ql/sanpham" element={<QLSanPham />} />
           <Route path="/ql/cate" element={<CategoryManage />} />
           <Route path="/ql/user" element={<UserManage />} />
-
         </Route>
         <Route path="/chitietspadm/:id" element={<ChiTietSPAdm />} />
       </Routes>

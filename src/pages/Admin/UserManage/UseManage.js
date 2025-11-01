@@ -19,7 +19,7 @@ const UserManage = () => {
         }
 
         constructor();
-    }, [])
+    }, [showUpLevelModal, showBanModal, showDeleteModal])
     // console.log(listUser);
     const handleCloseBanModal = () => {
         setUserInfor(null);
@@ -48,15 +48,17 @@ const UserManage = () => {
                         <th scope="col">Email</th>
                         <th scope="col">Vai trò</th>
                         <th scope="col">Hành động</th>
+                        <th scope="col">Trạng thái</th>
                     </tr>
                 </thead>
                 <tbody>
                     {listUser.map((item, index) => {
-                        return (<tr>
+                        return (<tr key={`user${index}`}>
                             <td>{index}</td>
                             <td>{item.ten_khachhang}</td>
                             <td>{item.email}</td>
                             <td>{item.role}</td>
+                            <td>{item.status ? "Đang hoạt động" : "Bị cấm"}</td>
                             <td>
                                 <button
                                     className="btn btn-sm btn-warning mx-2"
@@ -67,7 +69,7 @@ const UserManage = () => {
                                         setShowBanModal(true)
                                     }}
                                 >
-                                    Cấm
+                                    {item.status ? "Cấm" : "Bỏ cấm"}
                                 </button>
                                 <button
                                     className="btn btn-sm btn-danger mx-2"

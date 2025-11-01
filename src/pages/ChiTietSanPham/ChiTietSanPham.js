@@ -14,7 +14,7 @@ function ChiTietSanPham({ product, onClose }) {
     if (product.detailedDescription) {
       return product.detailedDescription;
     }
-    
+
     return `${product.description || 'Sản phẩm chất lượng cao'}
 
 📦 THÔNG TIN SẢN PHẨM:
@@ -55,8 +55,8 @@ function ChiTietSanPham({ product, onClose }) {
 
         <div className="ctsp-content">
           <div className="ctsp-image-section">
-            <img 
-              src={product.image} 
+            <img
+              src={product.image}
               alt={product.name}
               className="ctsp-main-image"
               onError={(e) => {
@@ -77,12 +77,7 @@ function ChiTietSanPham({ product, onClose }) {
               </div>
             </div>
 
-            <div className="ctsp-section">
-              <h3 className="ctsp-section-title">Mô tả sản phẩm</h3>
-              <p className="ctsp-description">
-                {getDetailedDescription()}
-              </p>
-            </div>
+
 
             {/* Colors */}
             <div className="ctsp-section">
@@ -165,6 +160,12 @@ function ChiTietSanPham({ product, onClose }) {
               </div>
             </div>
 
+            <div className="ctsp-section">
+              <h3 className="ctsp-section-title">Mô tả sản phẩm</h3>
+              <p className="ctsp-description">
+                {getDetailedDescription()}
+              </p>
+            </div>
             {/* Actions */}
             <div className="ctsp-actions">
               <button className="ctsp-btn-cart">Thêm giỏ hàng</button>

@@ -1,6 +1,7 @@
 import './CategoryManage.css'
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import axios from '../../../api/axiosClient';
+import { toast } from 'react-toastify';
 
 const CategoryManage = () => {
     const [categories, setCategories] = useState([]);
@@ -14,7 +15,7 @@ const CategoryManage = () => {
     const [editingMainParentId, setEditingMainParentId] = useState(null);
     const [nameEditSub, setNameEditSub] = useState("");
 
-
+    const [reload, setReload] = useState(true);
 
     useEffect(() => {
 
@@ -23,9 +24,9 @@ const CategoryManage = () => {
             setCategories(api);
         }
         getAllDM();
-    }, [])
+    }, [reload])
 
-    console.log(categories)
+    // console.log(categories)
     // Load dữ liệu khi trang load
     function loadCategories() {
         if (categories.length === 0) {
@@ -38,14 +39,21 @@ const CategoryManage = () => {
     }
 
     // Thêm danh mục lớn mới
-    const addMainCategory = () => {
-        let name = mainCategoryName;
+    const addMainCategory = async () => {
+        let name = mainCategoryName.trim();
         if (!name) {
             alert('Vui lòng nhập tên danh mục lớn!');
             return;
         }
-        const newId = categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1;
-        setCategories([...categories, { id: newId, name: name, subcategories: [] }]);
+        const api = await axios.post('/api/cate/postCreateCateBig', { nameCate: name })
+        if (api?.EC !== 0) {
+            toast.error(api?.EM);
+            return;
+        }
+        toast.success("Thêm thành công!");
+        setReload(!reload);
+        // const newId = categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1;
+        // setCategories([...categories, { id: newId, name: name, subcategories: [] }]);
         setMainCategoryName("");
     }
 
@@ -54,9 +62,10 @@ const CategoryManage = () => {
         setEditingMainId(id)
         // loadCategories();
     }
+    // console.log(categories);
 
     // Lưu sửa danh mục lớn
-    function saveMainEdit(id) {
+    const saveMainEdit = async (id) => {
         const input = editMain.current.value;
         const newName = input.trim();
 
@@ -64,19 +73,35 @@ const CategoryManage = () => {
             alert('Tên danh mục lớn không được để trống!');
             return;
         }
-        const cat = categories.find(c => c.id === id);
-        if (cat) {
-            setCategories(categories.map(cate => cate.id === id ? { ...cate, name: newName } : cate))
-            setEditingMainId(null);
+        const api = await axios.put('/api/cate/putEditCateBig', { id, nameCate: newName });
+        if (api?.EC !== 0) {
+            toast.error(api?.EM);
+            return;
         }
+        toast.success("Sửa thành công");
+        setReload(!reload);
+        // const cat = categories.find(c => c.id === id);
+        // if (cat) {
+        //     setCategories(categories.map(cate => cate.id === id ? { ...cate, name: newName } : cate))
+        //     setEditingMainId(null);
+        // }
+        setEditingMainId(null);
+
     }
     const cancelEdit = () => {
         setEditingMainId(null);
     }
     // Xóa danh mục lớn (xóa cả subcategories)
-    function deleteMainCategory(id) {
+    async function deleteMainCategory(id, nameCate) {
         if (window.confirm('Bạn có chắc muốn xóa danh mục lớn này? (Sẽ xóa cả subcategories)')) {
-            setCategories(categories.filter(c => c.id !== id))
+            const api = await axios.delete(`/api/cate/deleteCateBig?id=${id}&nameCate=${nameCate}`);
+            if (api?.EC !== 0) {
+                toast.error(api?.EM);
+                return;
+            }
+            toast.success("Xóa thành công");
+            setReload(!reload);
+            // setCategories(categories.filter(c => c.id !== id))
         }
     }
 
@@ -92,7 +117,7 @@ const CategoryManage = () => {
     }
 
     // Thêm subcategory
-    function addSubcategory(parentId) {
+    async function addSubcategory(parentId) {
         const nameInput = nameSub;
         const name = nameInput.trim();
         if (!name) {
@@ -100,12 +125,17 @@ const CategoryManage = () => {
             return;
         }
 
-        let parentCat = categories.find(c => c.id === parentId);
-
-        const subNewId = parentCat.subcategories.length > 0 ? Math.max(...parentCat.subcategories.map(s => s.id)) + 1 : 1;
-        setCategories(categories.map(cate => cate.id === parentId ? { ...cate, subcategories: [...cate.subcategories, { id: subNewId, name: name }] } : cate))
+        const api = await axios.post('/api/cate/postCreateCate', { nameCate: name, idParent: parentId });
+        if (api?.EC !== 0) {
+            toast.error(api?.EM);
+            return;
+        }
+        // let parentCat = categories.find(c => c.id === parentId);
+        // const subNewId = parentCat.subcategories.length > 0 ? Math.max(...parentCat.subcategories.map(s => s.id)) + 1 : 1;
+        // setCategories(categories.map(cate => cate.id === parentId ? { ...cate, subcategories: [...cate.subcategories, { id: subNewId, name: name }] } : cate))
         toggleSubForm(parentId); // Ẩn form sau khi thêm
         setNameSub("");
+        setReload(!reload);
     }
 
     // Sửa subcategory
@@ -115,9 +145,15 @@ const CategoryManage = () => {
         setEditingMainParentId(parentId);
 
     }
+    const handleCloseAddSub = () => {
+        setNameEditSub(null);
+        setEditingSubId(null);
+        setEditingMainParentId(null);
+
+    }
 
     // Lưu sửa subcategory
-    function saveSubEdit(parentId, subId) {
+    async function saveSubEdit(parentId, subId) {
 
         const input = nameEditSub;
         const newName = input.trim();
@@ -127,31 +163,39 @@ const CategoryManage = () => {
             return;
         }
 
-        const parentCat = categories.find(c => c.id === parentId);
-        if (parentCat && parentCat.subcategories) {
-            const sub = parentCat.subcategories.find(s => s.id === subId);
-            if (sub) {
-                setCategories(categories.map(cate => cate.id === parentId ? { ...cate, subcategories: cate.subcategories.map(subcop => subcop.id === subId ? { ...subcop, name: nameEditSub } : subcop) } : cate))
-                setEditingSubId(null);
-                setEditingMainParentId(null);
-            }
+        const api = await axios.put('/api/cate/putEditCate', { id: subId, nameCate: newName });
+        if (api?.EC !== 0) {
+            toast.error(api?.EM);
+            return;
         }
+        setReload(!reload);
+        setEditingSubId(null);
+        setEditingMainParentId(null);
+        // const parentCat = categories.find(c => c.id === parentId);
+        // if (parentCat && parentCat.subcategories) {
+        //     const sub = parentCat.subcategories.find(s => s.id === subId);
+        //     if (sub) {
+        //         setCategories(categories.map(cate => cate.id === parentId ? { ...cate, subcategories: cate.subcategories.map(subcop => subcop.id === subId ? { ...subcop, name: nameEditSub } : subcop) } : cate))
+        //         setEditingSubId(null);
+        //         setEditingMainParentId(null);
+        //     }
+        // }
     }
-
     // Xóa subcategory
-    function deleteSubcategory(parentId, subId) {
+    async function deleteSubcategory(parentId, subId, name) {
         if (window.confirm('Bạn có chắc muốn xóa danh mục con này?')) {
-            const parentCat = categories.find(c => c.id === parentId);
-            if (parentCat && parentCat.subcategories) {
-
-                setCategories(categories.map(cate => cate.id === parentId ? { ...cate, subcategories: cate.subcategories.filter(subcop => subcop.id !== subId) } : cate))
-
+            const api = await axios.delete(`/api/cate/deleteCate?id=${subId}&nameCate=${name}`)
+            if (api?.EC !== 0) {
+                toast.error(api?.EM);
+                return;
             }
+            setReload(!reload);
+            // const parentCat = categories.find(c => c.id === parentId);
+            // if (parentCat && parentCat.subcategories) {
+            //     setCategories(categories.map(cate => cate.id === parentId ? { ...cate, subcategories: cate.subcategories.filter(subcop => subcop.id !== subId) } : cate))
+            // }
         }
     }
-
-
-
 
 
     return (
@@ -217,7 +261,7 @@ const CategoryManage = () => {
                                             {editingMainId === cat.id ? '' :
                                                 <button className="edit-btn" onClick={() => editMainCategory(cat.id)}>Sửa</button>
                                             }
-                                            <button className="delete-btn" onClick={() => deleteMainCategory(cat.id)}>Xóa</button>
+                                            <button className="delete-btn" onClick={() => deleteMainCategory(cat.id, cat.name)}>Xóa</button>
                                             <button className="add-sub-btn" onClick={() => toggleSubForm(cat.id)}>Thêm danh mục con</button>
                                         </td>
                                     </tr>
@@ -258,7 +302,8 @@ const CategoryManage = () => {
                                                                                 setNameEditSub(event.target.value)
                                                                             }}
                                                                         />
-                                                                            <button className={"save-btn mx-5"} onClick={() => saveSubEdit(cat.id, sub.id)}>Lưu</button></>
+                                                                            <button className={"save-btn mx-5"} onClick={() => saveSubEdit(cat.id, sub.id)}>Lưu</button>
+                                                                            <button className={"cancel-btn"} onClick={() => handleCloseAddSub()}>Hủy</button></>
                                                                         :
                                                                         sub.name
                                                                     }
@@ -267,7 +312,7 @@ const CategoryManage = () => {
                                                                     {editingSubId === sub.id && editingMainParentId === cat.id ? '' :
                                                                         <><button className="edit-btn" onClick={() => editSubcategory(cat.id, sub.id)}>Sửa</button></>
                                                                     }
-                                                                    <button className="delete-btn" onClick={() => deleteSubcategory(cat.id, sub.id)}>Xóa</button>
+                                                                    <button className="delete-btn" onClick={() => deleteSubcategory(cat.id, sub.id, sub.name)}>Xóa</button>
                                                                 </td>
                                                             </tr>
                                                         )

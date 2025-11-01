@@ -1,7 +1,18 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-
+import axios from '../../../api/axiosClient';
+import { toast } from 'react-toastify';
 function ModalDeleteUser({ show, handleClose, userInfor }) {
+
+    const handleDeleteUser = async () => {
+        const api = await axios.delete(`/api/user/deleteUser?id=${userInfor.makh}`)
+        if (api.EC === 0) {
+            toast.success("xóa thành công");
+            handleClose();
+        } else {
+            toast.error(api?.EM)
+        }
+    }
 
     return (
         <>
@@ -14,7 +25,7 @@ function ModalDeleteUser({ show, handleClose, userInfor }) {
                     <Button variant="secondary" onClick={handleClose}>
                         Không
                     </Button>
-                    <Button variant="primary" onClick={handleClose}>
+                    <Button variant="primary" onClick={handleDeleteUser}>
                         Có
                     </Button>
                 </Modal.Footer>

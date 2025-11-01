@@ -9,7 +9,7 @@ const MainPage = () => {
             <div className="header-content">
                 <div className="logo">
                     <img
-                        src="H_by_sokolski-removebg-preview.png"
+                        src="../H_by_sokolski-removebg-preview.png"
                         alt="HanCock Logo"
                     />
                     <span className="logo-text">HanCock</span>
@@ -23,7 +23,7 @@ const MainPage = () => {
                     <Link className="btnf" to="/ql/cate">Danh mục</Link>
                     <button className="btnf">📊 Báo cáo</button>
                     <button className="btnf">⚙️ Cài đặt</button>
-                    <button className="btnf">👤 Admin</button>
+                    <button className="btnf">👤 {JSON.parse(localStorage.getItem('user')).ten_khachhang}</button>
 
                     {/* ad user and cate */}
 
