@@ -1,0 +1,42 @@
+   body {
+            font-family: 'Nunito Sans', sans-serif;
+            background-color: #f8f9fa; 
+            color: #343a40; 
+        }
+        h1, h3, h5, h6, .fw-bold {
+            font-weight: 700;
+            color: #212529; 
+        }
+        
+        .btn-primary {
+            --bs-btn-bg: #212529; 
+            --bs-btn-border-color: #212529;
+            --bs-btn-hover-bg: #343a40; 
+            --bs-btn-hover-border-color: #343a40;
+            --bs-btn-font-weight: 600; 
+        }
+        
+        .btn-remove {
+            background: none;
+            border: none;
+            color: var(--bs-danger); 
+            padding: 0;
+            font-size: 1.25rem; 
+            line-height: 1; 
+        }
+        .btn-remove:hover {
+            color: #a71d2a;
+        }
+
+        .product-image {
+            width: 100px;
+            height: 120px;
+            object-fit: cover;
+        }
+        .quantity-input {
+            width: 70px;
+            text-align: center;
+        }
+        .form-label.small {
+            color: #6c757d; 
+        }

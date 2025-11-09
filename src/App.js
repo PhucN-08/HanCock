@@ -8,6 +8,8 @@ import MainPage from './pages/Admin/MainPageAdmin/MainPage.';
 import ChiTietSPAdm from './pages/ChiTietSPAdm/ChiTietSPAdm';
 import Shop from './pages/Shop/Shop';
 import FrameHeader from './pages/Home/FrameHeader';
+import Stat from './pages/Stat/ThongKe';
+import Cart from './pages/Cart/Cart';
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<FrameHeader />}>
           <Route path='/shop' element={<Shop />} />
+          <Route path='/cart' element={<Cart />} />
           <Route index element={< Home />} />
 
         </Route>
@@ -22,6 +25,7 @@ function App() {
           <Route index="/ql/sanpham" element={<QLSanPham />} />
           <Route path="/ql/cate" element={<CategoryManage />} />
           <Route path="/ql/user" element={<UserManage />} />
+          <Route path="/ql/stat" element={<Stat />} />
         </Route>
         <Route path="/chitietspadm/:id" element={<ChiTietSPAdm />} />
       </Routes>

@@ -1,14 +1,38 @@
-import React, { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './ChiTietSanPham.css';
+import axios from '../../api/axiosClient';
+import { toast } from 'react-toastify';
+
 
 function ChiTietSanPham({ product, onClose }) {
-  const [selectedColor, setSelectedColor] = useState('Đen');
-  const [selectedSize, setSelectedSize] = useState('M');
+  // console.log(product);
+
+
+  const [selectedColor, setSelectedColor] = useState();
+  const [selectedSize, setSelectedSize] = useState();
+  const [productSelect, setProductSelect] = useState();
+  const [sumPro, setSumPro] = useState(0);
+  let numberAddCart = useRef(1)
+
+  useEffect(() => {
+    const getDetaiPro = async () => {
+      const api = await axios.get(`/api/pro/getDetailProductsById?id=${product?.id}`);
+      // console.log(api);
+      const apiCount = await axios.get(`/api/pro/getSumProduct?masp=${product?.id}&mausac=${selectedColor}&kichco=${selectedSize}`);
+      setProductSelect(api?.detail)
+      setSumPro(apiCount.soluong)
+
+    }
+    if (product?.id) {
+      getDetaiPro();
+
+    }
+  }, [product])
 
   if (!product) return null;
 
-  const colors = ['Đen', 'Trắng', 'Xám', 'Xanh'];
-  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+  const colors = productSelect?.map((value) => { return value.mausac });
+  const sizes = productSelect?.map((value) => { return value.kich_co });
 
   const getDetailedDescription = () => {
     if (product.detailedDescription) {
@@ -45,6 +69,33 @@ function ChiTietSanPham({ product, onClose }) {
 - Email: support@hancock.com
 - Địa chỉ: Hà Nội, Việt Nam`;
   };
+  // console.log("sadas", selectedColor)
+  const handleLoadSumPro = async (color, size) => {
+    const api = await axios.get(`/api/pro/getSumProduct?masp=${product.id}&mausac=${color}&kichco=${size}`)
+    console.log(api);
+    setSumPro(api.soluong || 0)
+  }
+  const handleAddCart = async () => {
+    // console.log("number add cart", numberAddCart.current.value);
+    let numberTemp = +numberAddCart.current.value;
+    if (numberTemp > sumPro) {
+      toast.error("Số lượng vượt quá số lượng trong kho!")
+      return;
+    }
+    if (!selectedColor) {
+      toast.error("Chọn màu sắc trước!")
+      return;
+    }
+    if (!selectedSize) {
+      toast.error("Chọn size trước!")
+      return;
+    }
+    let proAddCart = productSelect.find((val) => val.mausac === selectedColor && val.kich_co === selectedSize);
+    // console.log(proAddCart)
+    await axios.post('/api/cart/PostAddCart', { idPro: proAddCart.mabt, number: numberTemp })
+    toast.success('Thêm thành công');
+    onClose();
+  }
 
   return (
     <div className="ctsp-overlay" onClick={onClose}>
@@ -56,7 +107,7 @@ function ChiTietSanPham({ product, onClose }) {
         <div className="ctsp-content">
           <div className="ctsp-image-section">
             <img
-              src={product.image}
+              src={selectedColor ? productSelect.filter(value => value.mausac === selectedColor)[0].anh : product.image}
               alt={product.name}
               className="ctsp-main-image"
               onError={(e) => {
@@ -83,11 +134,14 @@ function ChiTietSanPham({ product, onClose }) {
             <div className="ctsp-section">
               <h3 className="ctsp-section-title">Màu sắc</h3>
               <div className="ctsp-colors">
-                {colors.map((color) => (
+                {colors?.map((color, index) => (
                   <button
-                    key={color}
+                    key={'in' + index}
                     className={`ctsp-color-btn ${selectedColor === color ? 'active' : ''}`}
-                    onClick={() => setSelectedColor(color)}
+                    onClick={() => {
+                      setSelectedColor(color);
+                      handleLoadSumPro(color, selectedSize);
+                    }}
                   >
                     {color}
                   </button>
@@ -99,15 +153,39 @@ function ChiTietSanPham({ product, onClose }) {
             <div className="ctsp-section">
               <h3 className="ctsp-section-title">Kích thước</h3>
               <div className="ctsp-sizes">
-                {sizes.map((size) => (
+                {sizes?.map((size, index) => (
                   <button
-                    key={size}
+                    key={'kt' + index}
                     className={`ctsp-size-btn ${selectedSize === size ? 'active' : ''}`}
-                    onClick={() => setSelectedSize(size)}
+                    onClick={() => {
+                      setSelectedSize(size)
+                      handleLoadSumPro(selectedColor, size);
+                    }}
                   >
                     {size}
                   </button>
                 ))}
+              </div>
+            </div>
+            <div className='container d-flex'>
+              <div className="ctsp-section col-6">
+                <h3 className="ctsp-section-title">Số lượng trong kho</h3>
+                <div className="ctsp-sizes">
+                  {sumPro}
+                </div>
+              </div>
+              <div className="ctsp-section col-6">
+                <h3 className="ctsp-section-title">Số lượng </h3>
+                <div className="ctsp-sizes">
+                  <input
+                    type="number"
+                    className="form-control form-control-sm quantity-input mx-auto"
+                    ref={numberAddCart}
+                    min={1}
+                    max={sumPro}
+                    defaultValue={1}
+                  />
+                </div>
               </div>
             </div>
 
@@ -168,7 +246,12 @@ function ChiTietSanPham({ product, onClose }) {
             </div>
             {/* Actions */}
             <div className="ctsp-actions">
-              <button className="ctsp-btn-cart">Thêm giỏ hàng</button>
+              <button
+                className="ctsp-btn-cart"
+                onClick={() => {
+                  handleAddCart()
+                }}
+              >Thêm giỏ hàng</button>
               <button className="ctsp-btn-buy">Mua ngay</button>
             </div>
           </div>

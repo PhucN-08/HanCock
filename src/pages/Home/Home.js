@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import './Home.css';
 import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
 import axios from '../../api/axiosClient';
-import { Bounce, ToastContainer } from 'react-toastify';
 import ModalLogout from './ModalLogout';
 import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
+import { Link } from 'react-router-dom';
 
 
 function Home() {
@@ -32,7 +32,7 @@ function Home() {
 
         const getAllPro = async () => {
             try {
-                const api = await axios.get('/api/pro/getAllPro');
+                const api = await axios.get('/api/pro/getAllProByClient');
                 setAllProducts(api);
             } catch (error) {
 
@@ -51,7 +51,7 @@ function Home() {
         getAllCate();
     }, [])
 
-    console.log("cate", categories);
+    // console.log("cate", categories);
     const handleCloseModalLogOut = () => {
         setShowModalLogOut(false);
     }
@@ -108,7 +108,7 @@ function Home() {
                         Khám phá bộ sưu tập mới nhất từ HanCock
                     </p>
                     <div className="hero-cta">
-                        <a href="#shop" className="btn-primary">Mua Sắm Ngay</a>
+                        <Link to={'shop'} className="btn-primary">Mua Sắm Ngay</Link>
                         <a href="#products" className="btn-secondary">Xem Bộ Sưu Tập</a>
                     </div>
                 </div>
@@ -166,7 +166,7 @@ function Home() {
                                             </div>
                                             {product.khuyenmai && (
                                                 <div className="home-product-original-price">
-                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.khuyenmai)}
+                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price + product.price * product.khuyenmai / 100)}
                                                 </div>
                                             )}
                                         </div>
@@ -234,19 +234,7 @@ function Home() {
                 userInfor={logged?.email}
                 handleLogOut={handleLogOut}
             />
-            <ToastContainer
-                position="top-center"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick={false}
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-                transition={Bounce}
-            />
+
             {showLogin && <LoginAndSignup onClose={() => setShowLogin(false)} />}
             {selectedProduct && (
                 <ChiTietSanPham

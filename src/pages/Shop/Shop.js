@@ -20,7 +20,8 @@ const Shop = () => {
 
         const getAllPro = async () => {
             try {
-                const api = await axios.get('/api/pro/getAllPro');
+                const api = await axios.get('/api/pro/getAllProByClient');
+                // console.log(api)
                 setAllProducts(api);
             } catch (error) {
 
@@ -49,7 +50,7 @@ const Shop = () => {
     const filterProducts = async (idCate, ten_dmc) => {
         if (!idCate) {
             try {
-                const api = await axios.get('/api/pro/getAllPro');
+                const api = await axios.get('/api/pro/getAllProByClient');
                 setAllProducts(api);
 
             } catch (error) {
@@ -62,7 +63,7 @@ const Shop = () => {
             setAllProducts(api);
 
         } catch (error) {
-
+            console.log(error)
         }
     }
     return (<>
@@ -115,7 +116,7 @@ const Shop = () => {
                                             </div>
                                             {product.khuyenmai && (
                                                 <div className="home-product-original-price">
-                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.khuyenmai)}
+                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price + product.price * product.khuyenmai / 100)}
                                                 </div>
                                             )}
                                         </div>

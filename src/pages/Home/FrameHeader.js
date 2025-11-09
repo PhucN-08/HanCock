@@ -1,10 +1,11 @@
 
 import './Home.css';
 import { useState, useEffect, useRef } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, redirect } from 'react-router-dom';
 import ModalLogout from './ModalLogout';
 import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
 import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
+import axios from '../../api/axiosClient';
 
 const FrameHeader = () => {
 
@@ -12,20 +13,22 @@ const FrameHeader = () => {
 
     const [showResults, setShowResults] = useState(false);
     const [logged, setlogged] = useState(JSON.parse(localStorage.getItem('user')));
-
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const searchRef = useRef(null);
     useEffect(() => {
         function handleClickOutside(event) {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
                 setShowSearch(false);
+                setShowResults(false);
+                setSearchQuery('');
+                setSearchResults([]);
                 setShowResults(false);
             }
         }
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-
 
     const [showLogin, setShowLogin] = useState(false);
 
@@ -40,9 +43,21 @@ const FrameHeader = () => {
         { id: 5, name: 'Túi Xách', price: '1.599.000đ', category: 'Phụ kiện', image: '/download.jpg' },
         { id: 6, name: 'Giày Cao Gót', price: '899.000đ', category: 'Giày', image: '/download.jpg' },
     ]);
-    const searchRef = useRef(null);
 
-    // console.log("cate", categories);
+    useEffect(() => {
+
+        const getAllPro = async () => {
+            try {
+                const api = await axios.get('/api/pro/getAllProByClient');
+                setAllProducts(api);
+            } catch (error) {
+
+            }
+        }
+
+        getAllPro();
+
+    }, [])
     const handleCloseModalLogOut = () => {
         setShowModalLogOut(false);
     }
@@ -50,7 +65,8 @@ const FrameHeader = () => {
     const handleLogOut = () => {
         localStorage.removeItem('user');
         localStorage.removeItem('accessToken');
-        window.location.reload()
+        window.location.href = "/";
+        // redirect('/')
     }
     const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -73,16 +89,7 @@ const FrameHeader = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
-                setShowSearch(false);
-                setShowResults(false);
-            }
-        }
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+
 
 
     const openProductDetail = (product) => {
@@ -121,6 +128,7 @@ const FrameHeader = () => {
             setShowResults(false);
         }
     };
+
     return (
         <>
             <header className="header" id="header">
@@ -198,10 +206,10 @@ const FrameHeader = () => {
                             ) : null}
                         </div>
                     </div>
-                    <a href="#cart" className="nav-icon">
+                    <Link to={'cart'} className="nav-icon">
                         🛒
                         <span className="cart-count">3</span>
-                    </a>
+                    </Link>
                     {!logged
                         ?
                         <a href="#" className="nav-icon" onClick={(e) => { e.preventDefault(); setShowLogin(true); }}>👤</a>

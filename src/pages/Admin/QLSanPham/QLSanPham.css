@@ -70,6 +70,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    text-align: center;
 }
 
 .btnf:hover {
@@ -110,7 +111,7 @@
     border-color: #15803d;
 }
 
-.ql-san-pham-page .btn-small {
+.ql-san-pham-page .btn-smalla {
     padding: 6px 12px;
     font-size: 12px;
     border-radius: 6px;

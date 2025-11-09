@@ -21,6 +21,7 @@ root.render(
       pauseOnHover
       theme="light"
       transition={Bounce}
+      style={{ zIndex: "20000" }}
     />
   </React.StrictMode>
 );

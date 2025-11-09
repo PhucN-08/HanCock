@@ -1,10 +1,12 @@
 
+import { Fragment } from 'react';
 import '../QLSanPham/QLSanPham.css';
 import { Link, Outlet } from 'react-router-dom';
 import('bootstrap/dist/css/bootstrap.min.css');
 
 const MainPage = () => {
     return (<>
+
         <header className="header">
             <div className="header-content">
                 <div className="logo">
@@ -21,7 +23,7 @@ const MainPage = () => {
                     <Link className="btnf" to="/ql">Sản phẩm</Link>
                     <Link className="btnf" to="/ql/user">Tài khoản</Link>
                     <Link className="btnf" to="/ql/cate">Danh mục</Link>
-                    <button className="btnf">📊 Báo cáo</button>
+                    <Link className="btnf" to="/ql/stat">📊 Thống kê</Link>
                     <button className="btnf">⚙️ Cài đặt</button>
                     <button className="btnf">👤 {JSON.parse(localStorage.getItem('user')).ten_khachhang}</button>
 
@@ -31,6 +33,7 @@ const MainPage = () => {
                 </div>
             </div>
         </header>
+
         <Outlet />
     </>)
 }

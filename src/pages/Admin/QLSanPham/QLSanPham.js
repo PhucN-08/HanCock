@@ -43,7 +43,7 @@ function QLSanPham() {
       }
       grouped[product.category].push(product);
     });
-
+    // console.log(grouped)
     return Object.keys(grouped)
       .sort((a, b) => a.localeCompare(b, 'vi', { sensitivity: 'base' }))
       .map((category) => ({
@@ -57,7 +57,7 @@ function QLSanPham() {
     ? products.filter(
       (p) =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.id === searchTerm ||
         p.category.toLowerCase().includes(searchTerm.toLowerCase())
     )
     : products;
@@ -66,7 +66,7 @@ function QLSanPham() {
 
   // Stats
   const totalProducts = products.length;
-  const totalValue = products.reduce((s, p) => s + p.price, 0);
+  const totalValue = products.reduce((s, p) => s + p.price * p.total_stock, 0);
   const categoriesCount = new Set(products.map((p) => p.category)).size;
 
   // Handlers
@@ -289,7 +289,8 @@ function QLSanPham() {
                       <th>ID</th>
                       <th>Tên sản phẩm</th>
                       <th>Mô tả</th>
-                      <th>Giá</th>
+                      <th>Số lượng</th>
+                      <th>Đơn giá</th>
                       <th>Thao tác</th>
                     </tr>
                   </thead>
@@ -314,6 +315,7 @@ function QLSanPham() {
                           <span className="product-name">{product.name}</span>
                         </td>
                         <td>{product.description || 'Chưa có mô tả'}</td>
+                        <td>{product.total_stock}</td>
                         <td>
                           <span className="product-price">
                             {new Intl.NumberFormat('vi-VN', {
@@ -326,18 +328,18 @@ function QLSanPham() {
                           <div className="product-actions">
                             <Link
                               to={`/chitietspadm/${product.id}`}
-                              className="btn btn-small btn-info"
+                              className="btnf btn-smalla btn-info"
                             >
                               📄 Chi tiết
                             </Link>
                             <button
-                              className="btn btn-small"
+                              className="btnf btn-smalla"
                               onClick={() => openEditModal(product)}
                             >
                               ✏️ Sửa
                             </button>
                             <button
-                              className="btn btn-small btn-danger"
+                              className="btnf btn-smalla btn-danger"
                               onClick={() => deleteProduct(product.id)}
                             >
                               🗑️ Xóa
