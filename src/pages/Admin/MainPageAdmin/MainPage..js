@@ -23,8 +23,9 @@ const MainPage = () => {
                     <Link className="btnf" to="/ql">Sản phẩm</Link>
                     <Link className="btnf" to="/ql/user">Tài khoản</Link>
                     <Link className="btnf" to="/ql/cate">Danh mục</Link>
-                    <Link className="btnf" to="/ql/stat">📊 Thống kê</Link>
-                    <button className="btnf">⚙️ Cài đặt</button>
+                    <Link className="btnf" to="/ql/stat">Thống kê</Link>
+                    <Link className="btnf" to='/ql/km'>Khuyến mãi</Link>
+                    <Link className="btnf" to='/ql/order'>Đơn hàng</Link>
                     <button className="btnf">👤 {JSON.parse(localStorage.getItem('user')).ten_khachhang}</button>
 
                     {/* ad user and cate */}

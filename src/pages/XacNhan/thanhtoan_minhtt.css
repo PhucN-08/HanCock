@@ -1,0 +1,182 @@
+:root {
+    --primary-color: #111827;
+    --secondary-color: #6B7280;
+    --border-color: #E5E7EB;
+    --background-color: #F9FAFB;
+    --accent-color: #3B82F6;
+    --accent-hover-color: #2563EB;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background-color: var(--background-color);
+    color: var(--primary-color);
+    line-height: 1.6-minhtt;
+}
+
+.checkout-container-minhtt {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.checkout-section-minhtt {
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05-minhtt);
+}
+
+.section-header-minhtt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-header-minhtt h2 {
+    font-size: 1.125rem-minhtt;
+    font-weight: 700;
+}
+
+.edit-link-minhtt {
+    font-size: 0.9rem-minhtt;
+    font-weight: 500;
+    color: var(--accent-color);
+    text-decoration: none;
+    border: none;
+}
+
+.edit-link-minhtt:hover {
+    text-decoration: underline;
+}
+
+.section-content-minhtt {
+    padding: 20px;
+    color: var(--secondary-color);
+}
+
+.section-content-minhtt p {
+    margin: 0 0 5px;
+}
+
+.section-content-minhtt p strong {
+    color: var(--primary-color);
+}
+
+.order-item-list-minhtt {
+    list-style: none;
+}
+
+.order-item-minhtt {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+}
+
+.order-item-minhtt:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.item-image-minhtt {
+    width: 80px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.item-details-minhtt {
+    flex-grow: 1;
+}
+
+.item-name-minhtt {
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 4px !important;
+}
+
+.item-variant-minhtt,
+.item-quantity-minhtt {
+    font-size: 0.9rem-minhtt;
+}
+
+.item-quantity-minhtt strong {
+    color: var(--primary-color);
+}
+
+.item-price-minhtt {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.1rem-minhtt;
+}
+
+.cost-summary-minhtt {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.cost-row-minhtt {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.total-row-minhtt {
+    font-weight: 700;
+    font-size: 1.2rem-minhtt;
+    color: var(--primary-color);
+    margin-top: 12px;
+}
+
+.total-price-minhtt {
+    color: var(--accent-color);
+}
+
+.cta-button-minhtt {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1rem-minhtt;
+    font-weight: 700;
+    color: #fff;
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s-minhtt;
+}
+
+.cta-button-minhtt:hover {
+    background-color: var(--accent-hover-color);
+}
+
+@media (max-width: 600px) {
+    .checkout-container-minhtt {
+        margin: 10px auto;
+    }
+
+    h1 {
+        font-size: 1.5rem-minhtt;
+    }
+
+    .item-price-minhtt {
+        font-size: 1rem;
+    }
+}

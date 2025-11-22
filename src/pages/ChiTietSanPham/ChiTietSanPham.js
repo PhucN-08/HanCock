@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import './ChiTietSanPham.css';
 import axios from '../../api/axiosClient';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 
 function ChiTietSanPham({ product, onClose }) {
   // console.log(product);
 
-
+  const navigator = useNavigate();
   const [selectedColor, setSelectedColor] = useState();
   const [selectedSize, setSelectedSize] = useState();
   const [productSelect, setProductSelect] = useState();
@@ -72,7 +73,7 @@ function ChiTietSanPham({ product, onClose }) {
   // console.log("sadas", selectedColor)
   const handleLoadSumPro = async (color, size) => {
     const api = await axios.get(`/api/pro/getSumProduct?masp=${product.id}&mausac=${color}&kichco=${size}`)
-    console.log(api);
+    // console.log(api);
     setSumPro(api.soluong || 0)
   }
   const handleAddCart = async () => {
@@ -95,6 +96,35 @@ function ChiTietSanPham({ product, onClose }) {
     await axios.post('/api/cart/PostAddCart', { idPro: proAddCart.mabt, number: numberTemp })
     toast.success('Thêm thành công');
     onClose();
+  }
+
+  const handleBuy = async () => {
+    // console.log("number add cart", numberAddCart.current.value);
+    let numberTemp = +numberAddCart.current.value;
+    if (numberTemp > sumPro) {
+      toast.error("Số lượng vượt quá số lượng trong kho!")
+      return;
+    }
+    if (!selectedColor) {
+      toast.error("Chọn màu sắc trước!")
+      return;
+    }
+    if (!selectedSize) {
+      toast.error("Chọn size trước!")
+      return;
+    }
+    let proAddCart = productSelect.find((val) => val.mausac === selectedColor && val.kich_co === selectedSize);
+    let proReq = await axios.get(`/api/pro/getInforProToBuy?mabt=${proAddCart.mabt}`);
+    proReq.soluong = numberTemp;
+    // console.log(proReq)
+    onClose();
+    navigator('../thanhtoan', {
+      state: {
+        cart: [proReq],
+        cur: window.location.href
+      }
+    });
+
   }
 
   return (
@@ -252,7 +282,10 @@ function ChiTietSanPham({ product, onClose }) {
                   handleAddCart()
                 }}
               >Thêm giỏ hàng</button>
-              <button className="ctsp-btn-buy">Mua ngay</button>
+              <button
+                className="ctsp-btn-buy"
+                onClick={handleBuy}
+              >Mua ngay</button>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 
 import './Home.css';
 import { useState, useEffect, useRef } from 'react';
-import { Link, Outlet, redirect } from 'react-router-dom';
+import { Link, Outlet, redirect, useNavigate } from 'react-router-dom';
 import ModalLogout from './ModalLogout';
 import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
 import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
@@ -16,6 +16,9 @@ const FrameHeader = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const searchRef = useRef(null);
+    const [numberCart, setNumberCart] = useState();
+    const [reloadNumber, setReloadNumber] = useState(false);
+    const navigator = useNavigate();;
     useEffect(() => {
         function handleClickOutside(event) {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -58,6 +61,17 @@ const FrameHeader = () => {
         getAllPro();
 
     }, [])
+    useEffect(() => {
+        const getNumberCart = async () => {
+            try {
+                const api = await axios.get('/api/cart/getNumberCart');
+                setNumberCart(api?.number);
+            } catch (error) {
+
+            }
+        }
+        getNumberCart();
+    }, [reloadNumber])
     const handleCloseModalLogOut = () => {
         setShowModalLogOut(false);
     }
@@ -128,7 +142,6 @@ const FrameHeader = () => {
             setShowResults(false);
         }
     };
-
     return (
         <>
             <header className="header" id="header">
@@ -206,10 +219,19 @@ const FrameHeader = () => {
                             ) : null}
                         </div>
                     </div>
-                    <Link to={'cart'} className="nav-icon">
+                    <button
+                        className="nav-icon"
+                        onClick={() => {
+                            if (logged) {
+                                navigator('cart');
+                            } else {
+                                setShowLogin(true);
+                            }
+                        }}
+                    >
                         🛒
-                        <span className="cart-count">3</span>
-                    </Link>
+                        <span className={numberCart ? "cart-count" : ""}>{numberCart}</span>
+                    </button>
                     {!logged
                         ?
                         <a href="#" className="nav-icon" onClick={(e) => { e.preventDefault(); setShowLogin(true); }}>👤</a>
@@ -239,7 +261,13 @@ const FrameHeader = () => {
                     onClose={() => setSelectedProduct(null)}
                 />
             )}
-            <Outlet />
+            <Outlet
+                context={{
+                    setReloadNumber,
+                    reloadNumber
+                }}
+
+            />
         </>
     )
 }

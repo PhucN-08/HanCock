@@ -10,6 +10,9 @@ import Shop from './pages/Shop/Shop';
 import FrameHeader from './pages/Home/FrameHeader';
 import Stat from './pages/Stat/ThongKe';
 import Cart from './pages/Cart/Cart';
+import ThanhToan from './pages/XacNhan/ThanhToan';
+import KhuyenMai from './pages/Admin/KhuyenMaiManage/KhuyenMai';
+import QLDonHang from './pages/Admin/OrderManage/QLDonHang';
 
 function App() {
   return (
@@ -19,13 +22,15 @@ function App() {
           <Route path='/shop' element={<Shop />} />
           <Route path='/cart' element={<Cart />} />
           <Route index element={< Home />} />
-
         </Route>
+        <Route path='/thanhtoan' element={<ThanhToan />}></Route>
         <Route path="/ql" element={<MainPage />}>
           <Route index="/ql/sanpham" element={<QLSanPham />} />
           <Route path="/ql/cate" element={<CategoryManage />} />
           <Route path="/ql/user" element={<UserManage />} />
           <Route path="/ql/stat" element={<Stat />} />
+          <Route path="/ql/km" element={<KhuyenMai />} />
+          <Route path="/ql/order" element={<QLDonHang />} />
         </Route>
         <Route path="/chitietspadm/:id" element={<ChiTietSPAdm />} />
       </Routes>

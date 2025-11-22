@@ -4,10 +4,11 @@ import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
 import axios from '../../api/axiosClient';
 import ModalLogout from './ModalLogout';
 import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 
 
 function Home() {
+    const { setReloadNumber, reloadNumber } = useOutletContext();
     const [showSearch, setShowSearch] = useState(false);
 
     const [showResults, setShowResults] = useState(false);
@@ -63,7 +64,9 @@ function Home() {
     }
     const [selectedProduct, setSelectedProduct] = useState(null);
 
-
+    useEffect(() => {
+        setReloadNumber(!reloadNumber)
+    }, [selectedProduct])
 
     const calculateDiscount = (original) => {
         return Math.round(original);

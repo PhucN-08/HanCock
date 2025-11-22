@@ -3,10 +3,11 @@ import axios from '../../api/axiosClient';
 import { useState, useEffect, useRef } from 'react';
 import './Shop.css'
 import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
+import { useOutletContext } from 'react-router-dom';
 
 const Shop = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
-
+    const { setReloadNumber, reloadNumber } = useOutletContext();
     const [categories, setCategories] = useState(null);
     const [allProducts, setAllProducts] = useState([
         { id: 1, name: 'Áo Thun', price: '299.000đ', category: 'Áo', image: '/download.jpg' },
@@ -39,7 +40,9 @@ const Shop = () => {
         getAllPro();
         getAllCate();
     }, [])
-
+    useEffect(() => {
+        setReloadNumber(!reloadNumber)
+    }, [selectedProduct])
     const openProductDetail = (product) => {
         setSelectedProduct(product);
     };

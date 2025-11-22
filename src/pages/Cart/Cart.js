@@ -2,11 +2,13 @@ import './css.css';
 import axios from '../../api/axiosClient';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 
 const Cart = () => {
     const [cart, setCart] = useState();
     const [reload, setReload] = useState(false);
+    const { setReloadNumber, reloadNumber } = useOutletContext();
+    const navigator = useNavigate();
     useEffect(() => {
         const getAllCart = async () => {
             const api = await axios.get('/api/cart/GetAllCart')
@@ -14,6 +16,9 @@ const Cart = () => {
             setCart(api);
         }
         getAllCart();
+    }, [reload])
+    useEffect(() => {
+        setReloadNumber(!reloadNumber)
     }, [reload])
     const handleChangNumber = (idCart, number) => {
         if (number < 1) {
@@ -43,6 +48,12 @@ const Cart = () => {
             toast.error(`${checkCart.tensp} bị quá số lượng trong kho!`);
             return;
         }
+        navigator('../thanhtoan', {
+            state: {
+                cart,
+                cur: window.location.href
+            }
+        });
 
     }
     const handleDeleteCart = async (idCart) => {
@@ -154,11 +165,7 @@ const Cart = () => {
 
                             <hr className="my-3" />
 
-                            <p className="mb-2 text-body-secondary">Mã giảm giá</p>
-                            <form className="input-group mb-3">
-                                <input type="text" className="form-control" placeholder="Nhập mã của bạn" />
-                                <button className="btn btn-outline-secondary" type="button">Áp dụng</button>
-                            </form>
+
 
                             <button
                                 className="btn btn-primary btn-lg w-100 mt-3"

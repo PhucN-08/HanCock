@@ -313,11 +313,12 @@ const Stat = () => {
                 }
             }
         });
+        // console.log(data);
 
-        const total = data.reduce((s, d) => s + d.revenue, 0);
+        const total = data.reduce((s, d) => + s + Number(d.revenue), 0);
         const avg = total / data.length;
         const max = Math.max(...data.map(d => d.revenue));
-
+        // console.log(total);
         const statsHtml = `
                 <div class="revenue-item-stat">
                     <div class="revenue-label-stat">Tổng doanh thu</div>
