@@ -116,6 +116,7 @@ function ChiTietSanPham({ product, onClose }) {
     let proAddCart = productSelect.find((val) => val.mausac === selectedColor && val.kich_co === selectedSize);
     let proReq = await axios.get(`/api/pro/getInforProToBuy?mabt=${proAddCart.mabt}`);
     proReq.soluong = numberTemp;
+    proReq.id_pro = proReq.mabt;
     // console.log(proReq)
     onClose();
     navigator('../thanhtoan', {
