@@ -13,6 +13,8 @@ import Cart from './pages/Cart/Cart';
 import ThanhToan from './pages/XacNhan/ThanhToan';
 import KhuyenMai from './pages/Admin/KhuyenMaiManage/KhuyenMai';
 import QLDonHang from './pages/Admin/OrderManage/QLDonHang';
+import MyOrder from './pages/MyOrder/MyOrder';
+import MyOrderDetail from './pages/MyOrderDetail/MyOrderDetail';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/" element={<FrameHeader />}>
           <Route path='/shop' element={<Shop />} />
           <Route path='/cart' element={<Cart />} />
+          <Route path='/myOrder' element={<MyOrder />} />
+          <Route path='/myOrderDetail' element={<MyOrderDetail />} />
           <Route index element={< Home />} />
         </Route>
         <Route path='/thanhtoan' element={<ThanhToan />}></Route>
