@@ -1,10 +1,12 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import './chitietdh.css';
+import { CloseButton } from 'react-bootstrap';
 const MyOrderDetail = () => {
     const myOrder = useLocation().state?.infor;
     // console.log(myOrder);
     const allPrice = myOrder.items.reduce((pre, curr) => (pre + parseInt(curr.price)), 0);
+    // console.log(myOrder);
     return (
         <div class="order-detail-container">
             <div class="page-header">
@@ -21,13 +23,13 @@ const MyOrderDetail = () => {
                     </li>
                     {myOrder.status !== 'cancelled' ?
                         <>
-                            <li class={`order-timeline-item completed`}>
+                            <li class={`order-timeline-item  ${myOrder.status === 'confirmed' ? "active" : (myOrder.status !== 'pending' && "completed")}`}>
                                 <strong>Đã xác nhận</strong>
                             </li>
-                            <li class={`order-timeline-item ${myOrder.status === 'pending' ? "active" : "completed"}`}>
+                            <li class={`order-timeline-item ${myOrder.status === 'shipping' ? "active" : (myOrder.status === 'completed' && "completed")}`}>
                                 <strong>Đang vận chuyển</strong>
                             </li>
-                            <li class={`order-timeline-item ${myOrder.status === 'completed' ? "active" : "completed"}`}>
+                            <li class={`order-timeline-item ${myOrder.status === 'completed' ? "active" : ""}`}>
                                 <strong>Giao hàng thành công</strong>
                             </li></>
                         :

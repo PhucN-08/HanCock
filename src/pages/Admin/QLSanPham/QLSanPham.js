@@ -13,6 +13,7 @@ function QLSanPham() {
   const [nextId, setNextId] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [reload, setReload] = useState(false);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -33,8 +34,8 @@ function QLSanPham() {
       setCategories(samCategory);
     }
     contruction();
-  }, []);
-
+  }, [reload]);
+  console.log(products);
   const groupProductsByCategory = (productList) => {
     const grouped = {};
     productList.forEach((product) => {
@@ -92,6 +93,7 @@ function QLSanPham() {
       description: product.description || '',
       price: product.price,
       image: product.image,
+      khuyenmai: product.khuyenmai
     });
     setModalOpen(true);
   };
@@ -159,14 +161,21 @@ function QLSanPham() {
         )
       );
       try {
-        await axios.put('/api/pro/putEditPro', {
+        const resPutPro = await axios.put('/api/pro/putEditPro', {
           id: currentEditId,
           name: formData.name,
           category: categories.find(e => e.ten_dmc === formData.category).ma_dmc,
           description: formData.description,
           price: Number(formData.price),
           image: formData.image,
+          khuyenmai: formData.khuyenmai === '' ? 0 : formData.khuyenmai
         })
+        if (resPutPro?.EC === 1) {
+          toast.error(resPutPro?.EM);
+          return;
+        }
+        toast.success("Sửa thành công");
+        setReload(!reload);
 
       } catch (err) {
         console.log(err)
@@ -184,15 +193,23 @@ function QLSanPham() {
         image: formData.image,
       };
       try {
-        await axios.post('/api/pro/postCreateProduct', {
+        const rescreate = await axios.post('/api/pro/postCreateProduct', {
           tensp: formData.name,
           ma_dmc: categories.find(e => e.ten_dmc === formData.category).ma_dmc,
           mota_sanpham: formData.description,
+          phantram_khuyenmai: formData.khuyenmai === '' ? 0 : formData.khuyenmai,
           gia: Number(formData.price),
           hinhanh: formData.image,
         })
-        setProducts((prev) => [...prev, newProd]);
-        setNextId((prev) => prev + 1);
+
+        // setProducts((prev) => [...prev, newProd]);
+        // setNextId((prev) => prev + 1);
+        if (rescreate?.EC === 1) {
+          toast.error(rescreate?.EM);
+          return;
+        }
+        toast.success("Thêm thành công");
+        setReload(!reload);
         showAlertMsg('Thêm sản phẩm thành công!', 'success');
       } catch (err) {
         console.log(err);
@@ -205,8 +222,14 @@ function QLSanPham() {
   const deleteProduct = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa?')) {
       try {
-        await axios.delete(`/api/pro/delProduct?id=${id}`);
-        setProducts((prev) => prev.filter((p) => p.id !== id));
+        const resDelPro = await axios.delete(`/api/pro/delProduct?id=${id}`);
+        if (resDelPro?.EC === 1) {
+          toast.error(resDelPro?.EM);
+          return;
+        }
+        toast.success("Xóa thành công");
+        // setProducts((prev) => prev.filter((p) => p.id !== id));
+        setReload(!reload);
         showAlertMsg('Xóa thành công!', 'success');
       } catch (err) {
         showAlertMsg('Lỗi từ hệ thống', 'error');
@@ -291,6 +314,7 @@ function QLSanPham() {
                       <th>Mô tả</th>
                       <th>Số lượng</th>
                       <th>Đơn giá</th>
+                      <th>Khuyến mãi</th>
                       <th>Thao tác</th>
                     </tr>
                   </thead>
@@ -324,6 +348,7 @@ function QLSanPham() {
                             }).format(product.price)}
                           </span>
                         </td>
+                        <td>{product.khuyenmai}%</td>
                         <td>
                           <div className="product-actions">
                             <Link
@@ -424,6 +449,18 @@ function QLSanPham() {
                     step="1000"
                     required
                     value={formData.price}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Giảm giá (%)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    name="khuyenmai"
+                    min="0"
+                    step="1"
+                    value={formData.khuyenmai}
                     onChange={handleInputChange}
                   />
                 </div>

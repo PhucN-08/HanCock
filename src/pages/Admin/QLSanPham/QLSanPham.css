@@ -17,7 +17,10 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
-    z-index: 100;
+}
+
+.header1 {
+    z-index: 0 !important;
 }
 
 .header-content {
@@ -217,13 +220,13 @@
 
 .ql-san-pham-page th:nth-child(2),
 .ql-san-pham-page td:nth-child(2) {
-    width: 80px;
+    width: 50px;
     text-align: center;
 }
 
 .ql-san-pham-page th:nth-child(3),
 .ql-san-pham-page td:nth-child(3) {
-    width: 200px;
+    width: 150px;
 }
 
 .ql-san-pham-page th:nth-child(4),
@@ -234,12 +237,12 @@
 
 .ql-san-pham-page th:nth-child(5),
 .ql-san-pham-page td:nth-child(5) {
-    width: 150px;
+    width: 100px;
 }
 
 .ql-san-pham-page th:nth-child(6),
 .ql-san-pham-page td:nth-child(6) {
-    width: 200px;
+    /* width: 200px; */
     text-align: center;
 }
 

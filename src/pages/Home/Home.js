@@ -4,7 +4,8 @@ import LoginAndSignup from '../LoginAndSignup/LoginAndSignup';
 import axios from '../../api/axiosClient';
 import ModalLogout from './ModalLogout';
 import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 
 function Home() {
@@ -28,6 +29,32 @@ function Home() {
         { id: 6, name: 'Giày Cao Gót', price: '899.000đ', category: 'Giày', image: '/download.jpg' },
     ]);
     const searchRef = useRef(null);
+    const [searchParams] = useSearchParams();
+
+    const code = searchParams.get("vnp_TransactionStatus");
+    const cart = searchParams.get("vnp_OrderInfo");
+
+    useEffect(() => {
+        console.log(code);
+        const thanhToan = async () => {
+            if (code) {
+                if (code === '00') {
+                    toast.success("Thanh toán thành công!");
+                } else {
+                    toast.error("Thanh toán thất bại!");
+                }
+                if (cart === 'true') {
+                    await axios.delete(`/api/order/deleteAllCart`);
+                }
+                const req = JSON.parse(localStorage.getItem('donhang'));
+                await axios.post(`/api/order/postOrder`, req);
+            }
+
+        }
+
+        thanhToan();
+
+    }, [])
 
     useEffect(() => {
 

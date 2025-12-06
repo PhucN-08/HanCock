@@ -23,7 +23,7 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    z-index: 1000;
+    z-index: 100;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -402,7 +402,7 @@ body {
     font-size: 13px;
     font-weight: 700;
     box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
-    z-index: 2;
+    /* z-index: 2; */
 }
 
 .home-product-img {

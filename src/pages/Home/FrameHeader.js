@@ -154,7 +154,9 @@ const FrameHeader = () => {
                     <ul className="nav-menu">
                         <li><Link to={'/'}>Trang chủ</Link></li>
                         <li><Link to={'shop'}>Shop</Link></li>
-                        <li><Link to={'myOrder'}>Đơn hàng</Link></li>
+                        {localStorage.getItem('accessToken')
+                            &&
+                            <li><Link to={'myOrder'}>Đơn hàng</Link></li>}
                         {/* <li className="dropdown">
                             <a href="#categories">Danh Mục</a>
                             <div className="dropdown-content">

@@ -74,19 +74,19 @@ const ThanhToan = () => {
     // console.log(changeInfor)
 
     const handleBuy = async () => {
-        console.log("tststst")
         if (!changeInfor) {
             toast.warning("Điền thông tin nhận hàng trước");
             setChangePayInfor(true);
             return;
         }
-        console.log(changeInfor)
+        // console.log(changeInfor)
         if (!changeInfor.ten || !changeInfor.noi_giao || !changeInfor.sdt) {
             toast.warning("Điền đầy đủ thông tin nhận hàng");
             setChangePayInfor(true);
             return;
         }
         if (payMethod === 'cod') {
+            // console.log("có chạy vào");
             let req = {
                 ma_km: macode,
                 tennguoinhan: changeInfor.ten,
@@ -96,13 +96,40 @@ const ThanhToan = () => {
                 list: lstPro
             }
             const create = await axios.post(`/api/order/postOrder`, req);
+            if (create?.EC === 2) {
+                toast.error(create.EM);
+                return;
+            }
             toast.success(create);
+            if (linkPre === "http://localhost:3000/cart") {
+                await axios.delete(`/api/order/deleteAllCart`);
+            }
             window.history.back();
+        } else {
+            let req = {
+                ma_km: macode,
+                tennguoinhan: changeInfor.ten,
+                giamgia: decrease,
+                so_dienthoai: changeInfor.sdt,
+                noi_giao: changeInfor.noi_giao,
+                list: lstPro
+            }
+            localStorage.removeItem("donhang");
+            localStorage.setItem("donhang", JSON.stringify(req));
+            let haveCart = false;
+            if (linkPre === "http://localhost:3000/cart") {
+                haveCart = true;
+            }
+            const create = await axios.post(`/api/thanhtoan/thanhtoan`, { amount: totalPay + 25000 - decrease, haveCart });
+            if (create?.EC === 2) {
+                toast.error(create.EM);
+                return;
+            } else {
+                window.location.href = create;
+            }
         }
 
-        if (linkPre === "http://localhost:3000/cart") {
-            await axios.delete(`/api/order/deleteAllCart`);
-        }
+
     }
     return (
         <div className="checkout-container-minhtt">

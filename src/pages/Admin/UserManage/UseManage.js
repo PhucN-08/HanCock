@@ -62,8 +62,6 @@ const UserManage = () => {
                             <td>
                                 <button
                                     className="btn btn-sm btn-warning mx-2"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#userModal"
                                     onClick={() => {
                                         setUserInfor(item);
                                         setShowBanModal(true)

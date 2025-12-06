@@ -137,7 +137,9 @@
     background-color: var(--cancelled-color);
 }
 
-
+.status-wait {
+    background-color: rgb(214, 214, 28);
+}
 
 @media (max-width: 600px) {
     body {

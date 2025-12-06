@@ -114,7 +114,7 @@ const ChiTietSPAdm = () => {
         <div className='detailAdmin'>
 
             <div className="container">
-                <div className="header">
+                <div className="header header1">
                     <div className="product-info">
                         <img src={detail?.pro?.hinhanh} alt="Sản phẩm" className="product-thumb" />
                         <div className="product-details">

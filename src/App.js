@@ -15,11 +15,13 @@ import KhuyenMai from './pages/Admin/KhuyenMaiManage/KhuyenMai';
 import QLDonHang from './pages/Admin/OrderManage/QLDonHang';
 import MyOrder from './pages/MyOrder/MyOrder';
 import MyOrderDetail from './pages/MyOrderDetail/MyOrderDetail';
+import ChatBot from './pages/chatbot/Chatbot';
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/chatbot" element={<ChatBot />} />
         <Route path="/" element={<FrameHeader />}>
           <Route path='/shop' element={<Shop />} />
           <Route path='/cart' element={<Cart />} />

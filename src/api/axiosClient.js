@@ -1,7 +1,10 @@
 import axios from "axios";
 
 const instance = axios.create({ baseURL: "http://localhost:8080" });
-instance.defaults.headers.common["authorization"] = `Bearer ${JSON.parse(localStorage.getItem('accessToken'))}`;
+let token = localStorage.getItem('accessToken');
+if (token) {
+    instance.defaults.headers.common["authorization"] = `Bearer ${JSON.parse(token)}`;
+}
 
 // Add a request interceptor
 instance.interceptors.request.use(function (config) {
