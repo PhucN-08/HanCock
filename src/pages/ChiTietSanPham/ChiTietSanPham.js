@@ -77,7 +77,12 @@ function ChiTietSanPham({ product, onClose }) {
     setSumPro(api.soluong || 0)
   }
   const handleAddCart = async () => {
+    if (!localStorage.getItem('user')) {
+      toast.warning("Bạn cần đăng nhập trước!");
+      return;
+    }
     // console.log("number add cart", numberAddCart.current.value);
+
     let numberTemp = +numberAddCart.current.value;
     if (numberTemp > sumPro) {
       toast.error("Số lượng vượt quá số lượng trong kho!")
@@ -99,8 +104,13 @@ function ChiTietSanPham({ product, onClose }) {
   }
 
   const handleBuy = async () => {
+    if (!localStorage.getItem('user')) {
+      toast.warning("Bạn cần đăng nhập trước!");
+      return;
+    }
     // console.log("number add cart", numberAddCart.current.value);
     let numberTemp = +numberAddCart.current.value;
+
     if (numberTemp > sumPro) {
       toast.error("Số lượng vượt quá số lượng trong kho!")
       return;

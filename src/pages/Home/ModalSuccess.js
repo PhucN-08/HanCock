@@ -8,8 +8,10 @@ function ModalSuccess({ show, setShow }) {
     const handleClose = () => {
         setShow(false);
     }
-
-    const order = JSON.parse(localStorage.getItem('donhang'));
+    let order = null;
+    if (localStorage.getItem('donhang')) {
+        order = JSON.parse(localStorage.getItem('donhang'));
+    }
 
     const exportPDF = () => {
         const element = document.getElementById("invoice");
@@ -27,12 +29,12 @@ function ModalSuccess({ show, setShow }) {
 
     return (
         <>
-            <div id="invoice">
+            {show && <div id="invoice">
                 <h2 style={{ textAlign: "center" }}>HÓA ĐƠN THANH TOÁN</h2>
                 <p><b>Ngày lập:</b> {new Date().toLocaleString("vi-VN")}</p>
-                <p><b>Người nhận:</b> {order.tennguoinhan}</p>
-                <p><b>SĐT:</b> {order.so_dienthoai}</p>
-                <p><b>Địa chỉ:</b> {order.noi_giao}</p>
+                <p><b>Người nhận:</b> {order?.tennguoinhan}</p>
+                <p><b>SĐT:</b> {order?.so_dienthoai}</p>
+                <p><b>Địa chỉ:</b> {order?.noi_giao}</p>
 
                 <table width="100%" border="1" cellPadding="8">
                     <thead>
@@ -45,7 +47,7 @@ function ModalSuccess({ show, setShow }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {order.list.map((sp, i) => (
+                        {order && order.list.map((sp, i) => (
                             <tr key={i}>
                                 <td>{i + 1}</td>
                                 <td>{sp.tensp}</td>
@@ -62,7 +64,7 @@ function ModalSuccess({ show, setShow }) {
                         ))}
                     </tbody>
                 </table>
-            </div>
+            </div>}
             <Modal show={show} onHide={handleClose} animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Xác nhận!</Modal.Title>

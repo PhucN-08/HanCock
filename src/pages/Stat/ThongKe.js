@@ -27,12 +27,15 @@ const Stat = () => {
         const apiGetStats = async () => {
             const api = await axios.get('/api/stat/GetStat');
             setInforStat(api);
-            setStat({
-                totalRevenue: api?.totalRevenue[0]?.total || 0,
-                totalOrders: api?.totalOrders[0]?.total || 0,
-                totalProducts: api?.totalProducts[0]?.need || 0,
-                totalCustomers: api?.totalCustomers[0]?.need || 0
-            })
+            if (api?.totalRevenue) {
+                setStat({
+                    totalRevenue: api?.totalRevenue[0]?.total || 0,
+                    totalOrders: api?.totalOrders[0]?.total || 0,
+                    totalProducts: api?.totalProducts[0]?.need || 0,
+                    totalCustomers: api?.totalCustomers[0]?.need || 0
+                })
+            }
+
 
         }
 

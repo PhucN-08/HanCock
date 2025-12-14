@@ -85,6 +85,7 @@ const ThanhToan = () => {
             setChangePayInfor(true);
             return;
         }
+
         if (payMethod === 'cod') {
             // console.log("có chạy vào");
             let req = {
@@ -93,7 +94,8 @@ const ThanhToan = () => {
                 giamgia: decrease,
                 so_dienthoai: changeInfor.sdt,
                 noi_giao: changeInfor.noi_giao,
-                list: lstPro
+                list: lstPro,
+                phuongthuc: 'cod'
             }
             const create = await axios.post(`/api/order/postOrder`, req);
             if (create?.EC === 2) {
@@ -112,7 +114,8 @@ const ThanhToan = () => {
                 giamgia: decrease,
                 so_dienthoai: changeInfor.sdt,
                 noi_giao: changeInfor.noi_giao,
-                list: lstPro
+                list: lstPro,
+                phuongthuc: 'bank'
             }
             localStorage.removeItem("donhang");
             localStorage.setItem("donhang", JSON.stringify(req));
