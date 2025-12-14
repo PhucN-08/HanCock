@@ -304,7 +304,14 @@ const ThanhToan = () => {
                             </div>}
                         <div className="cost-row-minhtt total-row-minhtt">
                             <span>Tổng cộng</span>
-                            <span className="total-price-minhtt">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPay + 25000 - decrease)}</span>
+                            <span className="total-price-minhtt">
+                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
+                                    .format((totalPay + 25000 - decrease) >= 0
+                                        ?
+                                        (totalPay + 25000 - decrease)
+                                        :
+                                        0
+                                    )}</span>
                         </div>
                     </div>
                 </div>

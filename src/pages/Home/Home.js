@@ -6,6 +6,7 @@ import ModalLogout from './ModalLogout';
 import ChiTietSanPham from '../ChiTietSanPham/ChiTietSanPham';
 import { Link, useOutletContext, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import ModalSuccess from './ModalSuccess';
 
 
 function Home() {
@@ -18,6 +19,8 @@ function Home() {
 
     const [logged, setlogged] = useState(JSON.parse(localStorage.getItem('user')));
     const [showModalLogOut, setShowModalLogOut] = useState(false);
+
+    const [showModalSuccess, setShowModalSuccess] = useState(false);
 
 
     const [allProducts, setAllProducts] = useState([
@@ -48,6 +51,7 @@ function Home() {
                 }
                 const req = JSON.parse(localStorage.getItem('donhang'));
                 await axios.post(`/api/order/postOrder`, req);
+                setShowModalSuccess(true);
             }
 
         }
@@ -265,6 +269,11 @@ function Home() {
                 handleClose={handleCloseModalLogOut}
                 userInfor={logged?.email}
                 handleLogOut={handleLogOut}
+            />
+
+            <ModalSuccess
+                show={showModalSuccess}
+                setShow={setShowModalSuccess}
             />
 
             {showLogin && <LoginAndSignup onClose={() => setShowLogin(false)} />}

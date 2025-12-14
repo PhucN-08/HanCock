@@ -74,7 +74,16 @@ const MyOrder = () => {
                                         <p>Ngày đặt: {val.createdAt}</p>
                                     </div>
                                     <div class="order-footer">
-                                        <span class="order-total">Tổng tiền: <strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val.items.reduce((pre, curr) => (pre + parseInt(curr.price)), 0) + 25000 - val.giamgia)}</strong></span>
+                                        <span class="order-total">Tổng tiền:
+                                            <strong>
+                                                {new Intl.NumberFormat('vi-VN',
+                                                    { style: 'currency', currency: 'VND' }).format((val.items.reduce((pre, curr) => (pre + parseInt(curr.price)), 0) + 25000 - val.giamgia) >= 0
+                                                        ?
+                                                        (val.items.reduce((pre, curr) => (pre + parseInt(curr.price)), 0) + 25000 - val.giamgia)
+                                                        :
+                                                        0
+                                                    )}
+                                            </strong></span>
                                     </div>
                                 </div>
                             </div>

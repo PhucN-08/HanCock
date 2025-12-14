@@ -121,11 +121,11 @@ const KhuyenMai = () => {
             return;
         }
         if (!km_tu_ngay) {
-            alert.warning("Vui lòng chọn ngày bắt đầu!");
+            toast.warning("Vui lòng chọn ngày bắt đầu!");
             return;
         }
         if (so_ngay <= 0) {
-            alert.warning("Số ngày khuyến mãi không hợp lệ!");
+            toast.warning("Số ngày khuyến mãi không hợp lệ!");
             return;
         }
 
